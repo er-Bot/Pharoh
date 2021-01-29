@@ -8,6 +8,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -42,6 +44,8 @@ public class Base implements Initializable {
     private static String accessLevel = "";
     public Button closebtn;
     public Label lblDate;
+    public ImageView minBtn;
+    public ImageView hideBtn;
     private AnchorPane newRightPane = null;
     private Button temp = null;
     private Button recover = null;
@@ -208,7 +212,6 @@ public class Base implements Initializable {
             scene.getStylesheets().add(css);
             stage.setTitle("Pharmacy Name");
             stage.setScene(scene);
-            stage.setMaximized(true);
             stage.initStyle(StageStyle.UNDECORATED);
             stage.setResizable(true);
 
@@ -218,7 +221,6 @@ public class Base implements Initializable {
                 y.set(event.getSceneY());
             });
             root.setOnMouseDragged(event -> {
-                stage.setMaximized(false);
                 stage.setX(event.getScreenX() - x.get());
                 stage.setY(event.getScreenY() - y.get());
             });
@@ -233,5 +235,15 @@ public class Base implements Initializable {
     public void quit() {
         Stage stage = (Stage) closebtn.getScene().getWindow();
         stage.close();
+    }
+
+    public void minimize() {
+        Stage stage = (Stage) minBtn.getScene().getWindow();
+        stage.setMaximized(!stage.isMaximized());
+    }
+
+    public void hide(MouseEvent mouseEvent) {
+        Stage stage = (Stage) hideBtn.getScene().getWindow();
+
     }
 }
