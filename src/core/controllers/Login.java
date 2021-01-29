@@ -10,6 +10,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.net.URL;
@@ -18,6 +19,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Login implements Initializable  {
     public Button quitButton;
@@ -139,18 +141,8 @@ public class Login implements Initializable  {
                     }
 
                     Stage logIn = (Stage) btnLogIn.getScene().getWindow(); //Getting current window
-
-                    Stage base = new Stage();
-                    Parent root;
-
-                    //Moving to InitializerController Class to load all required main.resources
-                    try {
-                        root = FXMLLoader.load(getClass().getResource("/core/view/initializer.fxml"));
-                        Scene s = new Scene(root);
-                        logIn.setScene(s);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    //Moving to InitializerController Class to load all required resources
+                    Initializer.initStage(logIn);
                 } else {
                     new PromptDialog("Authentication Error!", "Either username or password did not match!");
                 }
@@ -161,5 +153,36 @@ public class Login implements Initializable  {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static void open(Stage primaryStage) throws IOException {
+        AtomicReference<Double> x = new AtomicReference<>((double) 0);
+        AtomicReference<Double> y = new AtomicReference<>((double) 0);
+
+        Parent root = FXMLLoader.load(Login.class.getResource("/core/view/login.fxml"));
+        primaryStage.setTitle("Pharoh");
+        Scene scene = new Scene(root);
+        primaryStage.setScene(scene);
+
+        primaryStage.initStyle(StageStyle.UNDECORATED);
+        String css = Login.class.getResource("/core/css/login.css").toExternalForm();
+
+        scene.getStylesheets().add(css); // Adding stylesheet
+        primaryStage.setTitle("Log In Prompt");
+        primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
+
+
+        // drag ability
+        root.setOnMousePressed(event -> {
+            x.set(event.getSceneX());
+            y.set(event.getSceneY());
+        });
+        root.setOnMouseDragged(event -> {
+            primaryStage.setX(event.getScreenX() - x.get());
+            primaryStage.setY(event.getScreenY() - y.get());
+        });
+
+        primaryStage.show();
     }
 }

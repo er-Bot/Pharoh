@@ -3,11 +3,19 @@
     -fx-background-color: #263238;
 }
 
+.root {
+    -fx-background-color: #263238;
+}
+
 .button {
     -fx-text-fill: #ffffff;
     -fx-text-alignment: center;
     -fx-font-size: 15px;
-    -fx-border-radius: 0 0 0 0;
+    -fx-font-weight: bold;
+    -fx-background-color: #263238;
+    -fx-border-color: #ffffff;
+    -fx-border-radius: 10;
+    -fx-border-width: 2;
 }
 
 #topPane {
@@ -25,23 +33,4 @@
     -fx-background-color: #37474F;
     -fx-font-size: 15px;
     -fx-font-weight: bold;
-}
-
-#paneRight {
-    -fx-border-color: #ffffff;
-}
-
-#paneAccountSection {
-    /*-fx-background-color: #37474F;*/
-    -fx-border-color: #ffffff;
-    -fx-border-radius: 10 10 10 10;
-}
-
-.jfx-snackbar-content {
-    -fx-background-color: red;
-    -fx-text-fill: white;
-    -fx-background-radius: 10 10 10 10;
-}
-.jfx-snackbar-toast {
-    -fx-text-fill: white;
 }

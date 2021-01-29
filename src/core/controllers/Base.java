@@ -10,13 +10,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Base implements Initializable {
     public AnchorPane paneLeft;
@@ -37,6 +40,8 @@ public class Base implements Initializable {
 
     private static String username = "";
     private static String accessLevel = "";
+    public Button closebtn;
+    public Label lblDate;
     private AnchorPane newRightPane = null;
     private Button temp = null;
     private Button recover = null;
@@ -141,7 +146,7 @@ public class Base implements Initializable {
         lblAccessLevel.setText(accessLevel);
 
         //Controling access by checking access level of user
-        if(accessLevel.equals("Employee")) {
+        if(accessLevel.equals("EMPLOYEE")) {
             btnAdmin.setDisable(true);
         }
 
@@ -163,6 +168,7 @@ public class Base implements Initializable {
                 String time = LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm:ss a"));
                 // Setting the time in a label
                 lblClock.setText(time);
+                lblDate.setText(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE));
             });
 
             try {
@@ -183,15 +189,49 @@ public class Base implements Initializable {
 
         try {
             // Setting login window
-            Parent root = FXMLLoader.load(getClass().getResource("/core/view/login.fxml"));
-            root.getStylesheets().add("/core/css/login.css");
-            Scene scene = new Scene(root);
             Stage logInPrompt = new Stage();
-            logInPrompt.setScene(scene);
-            logInPrompt.show();
+            Login.open(logInPrompt);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void initStage(Stage stage) {
+        try {
+            AtomicReference<Double> x = new AtomicReference<>((double) 0);
+            AtomicReference<Double> y = new AtomicReference<>((double) 0);
+
+            Parent root = FXMLLoader.load(Initializer.class.getResource("/core/view/base.fxml"));
+            Scene scene = new Scene(root);
+            String css = Initializer.class.getResource("/core/css/base.css").toExternalForm();
+            scene.getStylesheets().add(css);
+            stage.setTitle("Pharmacy Name");
+            stage.setScene(scene);
+            stage.setMaximized(true);
+            stage.initStyle(StageStyle.UNDECORATED);
+            stage.setResizable(true);
+
+            // drag ability
+            root.setOnMousePressed(event -> {
+                x.set(event.getSceneX());
+                y.set(event.getSceneY());
+            });
+            root.setOnMouseDragged(event -> {
+                stage.setMaximized(false);
+                stage.setX(event.getScreenX() - x.get());
+                stage.setY(event.getScreenY() - y.get());
+            });
+
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void quit() {
+        Stage stage = (Stage) closebtn.getScene().getWindow();
+        stage.close();
     }
 }

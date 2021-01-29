@@ -1,5 +1,10 @@
 package core.controllers;
 
+import core.db.Client;
+import core.db.DBConnection;
+import core.db.Medicine;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,11 +17,16 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Initializer implements Initializable {
 
-    private static final int THREAD_SLEEP_INTERVAL = 50;
+    private static final int THREAD_SLEEP_INTERVAL = 100;
     @FXML
     public ProgressBar progressIndicator;
     @FXML
@@ -26,7 +36,7 @@ public class Initializer implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        LoadRecords initializerTask = new LoadRecords();
+        LoadRecords initializerTask = new LoadRecords(sessionUser);
         progressIndicator.progressProperty().unbind();
         taskName.textProperty().unbind();
         taskName.textProperty().bind(initializerTask.messageProperty());
@@ -36,172 +46,152 @@ public class Initializer implements Initializable {
         //Loading Main Application upon initializer task's succession
         initializerTask.setOnSucceeded(e -> {
             //Closing Current Stage
-            Stage currentSatge = (Stage) taskName.getScene().getWindow();
-            currentSatge.close();
-            loadApplication();
+            Stage currentStage = (Stage) taskName.getScene().getWindow();
+            currentStage.close();
+            Base.initStage(new Stage());
         });
     }
 
-    private void loadApplication() {
-        //Creating a new stage for main application
-        Parent root;
-        Stage base = new Stage();
-
+    public static void initStage(Stage stage){
         try {
-            root = FXMLLoader.load(getClass().getResource("/core/view/base.fxml"));
+            AtomicReference<Double> x = new AtomicReference<>((double) 0);
+            AtomicReference<Double> y = new AtomicReference<>((double) 0);
+
+            Parent root = FXMLLoader.load(Initializer.class.getResource("/core/view/initializer.fxml"));
             Scene scene = new Scene(root);
-            String css = this.getClass().getResource("/core/css/base.css").toExternalForm();
-            scene.getStylesheets().add(css);
-            base.setTitle("Inventory System");
-            base.setScene(scene);
-            base.setMaximized(true);
-            base.show();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+            stage.setTitle("Pharmacy Name");
+            stage.setScene(scene);
+
+            // drag ability
+            root.setOnMousePressed(event -> {
+                x.set(event.getSceneX());
+                y.set(event.getSceneY());
+            });
+            root.setOnMouseDragged(event -> {
+                stage.setX(event.getScreenX() - x.get());
+                stage.setY(event.getScreenY() - y.get());
+            });
+
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     static class LoadRecords extends Task {
+
+        String sessionUser;
+        public LoadRecords(String su){
+            sessionUser = su;
+        }
+
         @Override
-        protected Object call()  {
-            /*Connection connection = DBConnection.getConnection();
+        protected Object call() throws SQLException, InterruptedException {
+            Connection con = DBConnection.getConnection();
 
             //Creating OLs to save values from result set
             ObservableList<Client> clientsList = FXCollections.observableArrayList();
-            ObservableList<Medicament> medicamentList = FXCollections.observableArrayList();
-            ObservableList<String> medicamentTypeName = FXCollections.observableArrayList();
+            ObservableList<Medicine> medicineList = FXCollections.observableArrayList();
 
-            PreparedStatement getClientList = connection.prepareStatement("SELECT * FROM clients");
-            PreparedStatement getMedicamentList = connection.prepareStatement("SELECT *" +
-                    "FROM medicament, medicamenttype WHERE medicament.MedicamentType_medicamentTypeId = medicamenttype.medicamentTypeId ORDER BY medicamentID");
-            PreparedStatement getSellsList = connection.prepareStatement("SELECT * FROM purchases WHERE User_username ='"
-                    +sessionUser+"'" + " ORDER BY(purchaseID) DESC");
-            PreparedStatement getRentalList = connection.prepareStatement("SELECT * FROM rentals WHERE User_username ='"
-                    +sessionUser+"'" + " ORDER BY(rentalID) DESC");
-            PreparedStatement getAccountList = connection.prepareStatement("SELECT  clients.firstName, clients.lastName, accounts.acccountID, accounts.accountName, accounts.paymethod " +
-                    "FROM accounts, clients WHERE User_username ='"
-                    +sessionUser+"' AND Clients_clientID = clientID");
-            PreparedStatement getMedicamentType = connection.prepareStatement("SELECT * FROM medicamenttype");
-            PreparedStatement getOutOfStock = connection.prepareStatement("SELECT * FROM medicament, medicamenttype WHERE medicamentTypeId = MedicamentType_medicamentTypeId AND stock ="+0);
+            assert con != null;
+            // General tables
+            PreparedStatement getClientList = con.prepareStatement("select * from client");
+            PreparedStatement getMedicineList = con.prepareStatement("select * from medicine order by medi_id");
+            PreparedStatement getCCmdList = con.prepareStatement("select * from client_command order by(ccmd_id) desc");
+            PreparedStatement getSCmdList = con.prepareStatement("select * from supplier_command order by(scmd_id) desc");
 
-            //DashboardController stmts
-            PreparedStatement getRentalDue = connection.prepareStatement("SELECT COUNT(*), SUM(amountDue) FROM rentals WHERE amountDue <> 0");
-            PreparedStatement getPurchaseDue = connection.prepareStatement("SELECT COUNT(*), SUM(amountDue) FROM purchases WHERE amountDue <> 0");
-            PreparedStatement getTodaysSell = connection.prepareStatement("SELECT COUNT(*), SUM(payAmount) FROM purchases WHERE purchaseDate = '"+ Date.valueOf(LocalDate.now()) + "'");
-            PreparedStatement getTodaysRent = connection.prepareStatement("SELECT COUNT(*), SUM(paid) FROM rentals WHERE rentalDate = '"+ Date.valueOf(LocalDate.now()) + "'");
-            PreparedStatement getTodaysRentalDue = connection.prepareStatement("SELECT COUNT(*), SUM(amountDue) FROM rentals WHERE amountDue <> 0 AND rentalDate = '"+ Date.valueOf(LocalDate.now()) + "'");
-            PreparedStatement getTodaysPurchaseDue = connection.prepareStatement("SELECT COUNT(*), SUM(amountDue) FROM purchases WHERE amountDue <> 0 AND purchaseDate = '"+ Date.valueOf(LocalDate.now()) + "'");
-
-            ResultSet medicamentResultSet = getMedicamentList.executeQuery();
-            ResultSet clientResultSet = getClientList.executeQuery();
-            ResultSet sellsList = getSellsList.executeQuery();
-            ResultSet rentList = getRentalList.executeQuery();
-            ResultSet accountResultSet = getAccountList.executeQuery();
-            ResultSet medicamentType = getMedicamentType.executeQuery();
-            ResultSet stockOut = getOutOfStock.executeQuery();
-
-            //DashboardController rs
-            ResultSet rentalDue = getRentalDue.executeQuery();
-            ResultSet purchaseDue = getPurchaseDue.executeQuery();
+            ResultSet medicineRS = getMedicineList.executeQuery();
+            ResultSet clientRS = getClientList.executeQuery();
+            ResultSet ccmdRS = getCCmdList.executeQuery();
+            ResultSet scmdRS = getSCmdList.executeQuery();
+            
+            //Dashboard Statements
+            PreparedStatement getTodaysSell = con.prepareStatement("select count(*), sum(ccmd_total) from client_command where ccmd_date = '"+ Date.valueOf(LocalDate.now()) + "'");
+            PreparedStatement getTodaysPurchase = con.prepareStatement("select count(*), sum(scmd_total) from supplier_command where scmd_date = '"+ Date.valueOf(LocalDate.now()) + "'");
+            PreparedStatement getOutOfStock = con.prepareStatement("select * from medicine where medi_stock_qte = " + 0);
             ResultSet todaysSell = getTodaysSell.executeQuery();
-            ResultSet todaysRent = getTodaysRent.executeQuery();
-            ResultSet todaysRentDue = getTodaysRentalDue.executeQuery();
-            ResultSet todysPurchaseDue = getTodaysPurchaseDue.executeQuery();
+            ResultSet todaysPurchace = getTodaysPurchase.executeQuery();
+            ResultSet outOfStock = getOutOfStock.executeQuery();
 
             //Updating task message
             this.updateMessage("Loading Clients...");
             Thread.sleep(THREAD_SLEEP_INTERVAL);
 
             ArrayList<String> clientIDNameHolder = new ArrayList<>(); //Will store ID and Name from ResultSet
-            ArrayList<String> medicamentIDNameForSale = new ArrayList<>(); //Will hold medicament id name for sell
             ArrayList<String> clientName = new ArrayList<>();
-            ArrayList<Integer> medicamentIDForSale = new ArrayList<>();
-            ArrayList<String> medicamentIDNameForRentals = new ArrayList<>(); //Will hold medicament id name for rent
-            ArrayList<Integer> medicamentIDForRent = new ArrayList<>();
-            ArrayList<String> medicamentNames = new ArrayList<>();
             ArrayList<Integer> clientID = new ArrayList<>();
-            TreeMap<String, Integer> medicamentTypeTree = new TreeMap<>();
+            ArrayList<String> medicineIDNameForSale = new ArrayList<>(); //Will hold medicine id name for sell
+            ArrayList<Integer> medicineIDForSale = new ArrayList<>();
+            ArrayList<String> medicineIDNameForRentals = new ArrayList<>(); //Will hold medicine id name for rent
+            ArrayList<Integer> medicineIDForRent = new ArrayList<>();
+            ArrayList<String> medicineNames = new ArrayList<>();
+            TreeMap<String, Integer> medicineTypeTree = new TreeMap<>();
 
             // Getting values from clients result set
-            while(clientResultSet.next()) {
-                clientIDNameHolder.add(clientResultSet.getInt(1) + " | "
-                        + clientResultSet.getString(2) + "  "
-                        + clientResultSet.getString(3));
+            while(clientRS.next()) {
+                clientIDNameHolder.add(clientRS.getInt(1) + " | "
+                        + clientRS.getString(2) + "  "
+                        + clientRS.getString(3));
 
-                clientName.add(clientResultSet.getString(2)); //Adding first Name
-                clientName.add(clientResultSet.getString(3)); //Adding last name
+                clientName.add(clientRS.getString(2)); //Adding first Name
+                clientName.add(clientRS.getString(3)); //Adding last name
 
                 Client newClient = new Client(
-                        clientResultSet.getInt("clientID"),
-                        clientResultSet.getString("firstName"),
-                        clientResultSet.getString("lastName"),
-                        clientResultSet.getString("address"),
-                        clientResultSet.getString("phone"),
-                        clientResultSet.getString("email"),
-                        clientResultSet.getString("photo"),
-                        clientResultSet.getString("gender"),
-                        clientResultSet.getDate("memberSince"));
+                        clientRS.getInt("clt_id"),
+                        clientRS.getString("clt_fname"),
+                        clientRS.getString("clt_lname"),
+                        clientRS.getString("clt_sex"),
+                        clientRS.getString("clt_address"),
+                        clientRS.getString("clt_tel"),
+                        clientRS.getString("clt_order_doct"),
+                        clientRS.getString("clt_order_num")
+                );
 
                 clientsList.add(newClient);
 
-                clientID.add(clientResultSet.getInt(1));
+                clientID.add(clientRS.getInt(1));
             }
 
             //Setting fields in Clients List
             ClientController.clientsList = clientsList;
             ClientController.clientNames = clientName;
 
-            //Setting Id and Name to SellsController, RentalsController, Accounts
+            //Setting Id and Name to SellsController
             SellsController.clientIDName = clientIDNameHolder;
             SellsController.clientID = clientID;
-            RentalsController.clientIDName = clientIDNameHolder;
-            RentalsController.clientID = clientID;
-            AccountController.clientIDName = clientIDNameHolder;
 
             Thread.sleep(THREAD_SLEEP_INTERVAL);
             //Updating Task status
-            this.updateMessage("Loading Medicaments...");
+            this.updateMessage("Loading Medicines...");
 
-            while(medicamentResultSet.next()) {
-                Medicament medicament = new Medicament(medicamentResultSet.getInt("medicamentID"),
-                        medicamentResultSet.getString("medicamentName"),
-                        medicamentResultSet.getInt("stock"),
-                        false,
-                        false,
-                        medicamentResultSet.getDouble("salePrice"),
-                        medicamentResultSet.getDouble("rentRate"),
-                        medicamentResultSet.getString("photo"),
-                        medicamentResultSet.getString("typeName"));
+            while(medicineRS.next()) {
+                Medicine medicine = new Medicine(medicineRS.getInt("medi_id"),
+                        medicineRS.getString("medi_name"),
+                        medicineRS.getDate("medi_expire_date"),
+                        medicineRS.getDouble("medi_pu"),
+                        medicineRS.getDouble("medi_stock_ste"),
+                        medicineRS.getString("medi_desc"),
+                        medicineRS.getString("medi_dci"),
+                        medicineRS.getString("medi_form"),
+                        medicineRS.getDouble("medi_dose")
+                );
 
-                medicamentNames.add(medicamentResultSet.getString("medicamentName"));
+                medicineNames.add(medicineRS.getString("medi_name"));
 
-                if(medicamentResultSet.getString("rentalOrSale").contains("Rental"))
-                {
-                    medicament.setRent(true);
-                    medicamentIDNameForRentals.add(medicamentResultSet.getInt("medicamentID") + " | " +
-                            medicamentResultSet.getString("medicamentName"));
-                    medicamentIDForRent.add(medicamentResultSet.getInt("medicamentID"));
-                }
-                if(medicamentResultSet.getString("rentalOrSale").contains("Sale")) {
-                    medicamentIDNameForSale.add(medicamentResultSet.getInt("medicamentID") + " | " + medicamentResultSet.getString("medicamentName"));
-                    medicamentIDForSale.add(medicamentResultSet.getInt("medicamentID"));
-                    medicament.setSale(true);
-                }
-
-                medicamentList.add(medicament);
+                medicineList.add(medicine);
 
             }
 
             //Setting Observable Lists to the static field of StockController
-            StockController.medicamentList = medicamentList;
-            StockController.medicamentNames = medicamentNames;
-            SellsController.inventoryMedicament = medicamentIDNameForSale; //Setting medicament id and name for sale & RentalsController
-            SellsController.medicamentIDForSale = medicamentIDForSale;
-            RentalsController.inventoryMedicament = medicamentIDNameForRentals;
-            RentalsController.medicamentIDForRent = medicamentIDForRent;
+            StockController.medicineList = medicineList;
+            StockController.medicineNames = medicineNames;
+            SellsController.inventoryMedicine = medicineIDNameForSale; //Setting medicine id and name for sale & RentalsController
+            SellsController.medicineIDForSale = medicineIDForSale;
+            PurchaseController.inventoryMedicine = medicineIDNameForRentals;
+            PurchaseController.medicineIDForRent = medicineIDForRent;
 
             Thread.sleep(THREAD_SLEEP_INTERVAL);
-
+/*
             //Updating task status
             this.updateMessage("Loading Sells...");
             ObservableList<Purchase> sellsListByUser = FXCollections.observableArrayList();
@@ -209,7 +199,7 @@ public class Initializer implements Initializable {
             while(sellsList.next()) {
                 sellsListByUser.add(new Purchase(sellsList.getInt("purchaseID"),
                         sellsList.getInt("Clients_clientID"),
-                        sellsList.getInt("Medicament_medicamentID"),
+                        sellsList.getInt("Medicine_medicineID"),
                         sellsList.getString("purchaseDate"),
                         sellsList.getInt("purchaseQuantity"),
                         sellsList.getDouble("payAmount"),
@@ -228,7 +218,7 @@ public class Initializer implements Initializable {
 
             while (rentList.next()) {
                 rentsListByUser.add(new Rent(rentList.getInt("rentalID"),
-                        rentList.getInt("Medicament_medicamentID"),
+                        rentList.getInt("Medicine_medicineID"),
                         rentList.getInt("Clients_clientID"),
                         rentList.getString("rentalDate"),
                         rentList.getString("returnDate"),
@@ -265,8 +255,8 @@ public class Initializer implements Initializable {
             //DashboardController contents
             this.updateMessage("Loading Dashboard Contents...");
 
-            Double totalDueAmount = 0.0;
-            Integer totalDueCtr = 0;
+            double totalDueAmount = 0.0;
+            int totalDueCtr = 0;
 
             while (rentalDue.next()) {
                 totalDueCtr += rentalDue.getInt(1);
@@ -278,10 +268,10 @@ public class Initializer implements Initializable {
                 totalDueAmount += purchaseDue.getDouble(2);
             }
 
-            Double todaySell = 0.0;
-            Double todayRent = 0.0;
-            Integer rentCount = 0;
-            Integer sellCount = 0;
+            double todaySell = 0.0;
+            double todayRent = 0.0;
+            int rentCount = 0;
+            int sellCount = 0;
 
             while (todaysSell.next()) {
                 sellCount += todaysSell.getInt(1);
@@ -293,8 +283,8 @@ public class Initializer implements Initializable {
                 todayRent += todaysRent.getDouble(2);
             }
 
-            Double todaysDueAmount = 0.0;
-            Integer dueCtr = 0;
+            double todaysDueAmount = 0.0;
+            int dueCtr = 0;
 
             while (todaysRentDue.next()) {
                 dueCtr += todaysRentDue.getInt(1);
@@ -306,7 +296,7 @@ public class Initializer implements Initializable {
                 todaysDueAmount += todysPurchaseDue.getDouble(2);
             }
 
-            Integer stockOutCtr = 0;
+            int stockOutCtr = 0;
 
             while (stockOut.next()) {
                 stockOutCtr += 1;
@@ -323,22 +313,21 @@ public class Initializer implements Initializable {
             DashboardController.stockOut = stockOutCtr;
 
             Thread.sleep(THREAD_SLEEP_INTERVAL);
-            this.updateMessage("Loading Medicament Types....");
+            this.updateMessage("Loading Medicine Types....");
 
-            while (medicamentType.next()) {
-                medicamentTypeTree.put(medicamentType.getString(2), medicamentType.getInt(1));
-                medicamentTypeName.add(medicamentType.getString(2));
+            while (medicineType.next()) {
+                medicineTypeTree.put(medicineType.getString(2), medicineType.getInt(1));
+                medicineTypeName.add(medicineType.getString(2));
             }
 
-            StockController.medicamentType = medicamentTypeTree;
-            StockController.medicamentTypeNames = medicamentTypeName;
+            StockController.medicineType = medicineTypeTree;
+            StockController.medicineTypeNames = medicineTypeName;*/
 
             //Updating Status of the Task
             this.updateMessage("Loading Finished!");
-            Thread.sleep(THREAD_SLEEP_INTERVAL);*/
+            Thread.sleep(THREAD_SLEEP_INTERVAL);
 
             return null;
         }
     }
-
 }

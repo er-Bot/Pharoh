@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="core.controllers.Login">
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="350.0" prefWidth="600.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="core.controllers.Login">
 
     <TextField fx:id="txtUsername" layoutX="227.0" layoutY="135.0" onKeyPressed="#onEnterKey" prefHeight="30.0" prefWidth="311.0" promptText="username">
         <font>
@@ -29,13 +29,13 @@
             <Tooltip text="Show/Hide Password" />
         </tooltip>
     </CheckBox>
-    <Button fx:id="btnLogIn" layoutX="447.0" layoutY="301.0" onAction="#ctrlLogInCheck" onKeyPressed="#onEnterKey" prefHeight="51.0" prefWidth="112.0" style="-fx-background-color: #263238; -fx-text-fill: #ffffff; -fx-text-alignment: center; -fx-font-size: 15px; -fx-border-radius: 0 0 0 0;" text="Log In">
+    <Button fx:id="btnLogIn" layoutX="447.0" layoutY="292.0" onAction="#ctrlLogInCheck" onKeyPressed="#onEnterKey" prefHeight="51.0" prefWidth="112.0" style="-fx-background-color: #263238; -fx-text-fill: #ffffff; -fx-text-alignment: center; -fx-font-size: 15px; -fx-border-radius: 0 0 0 0;" text="Log In">
         <cursor>
             <Cursor fx:constant="HAND" />
         </cursor>
-      <font>
-         <Font name="Harrington" size="20.0" />
-      </font>
+        <font>
+            <Font name="Harrington" size="20.0" />
+        </font>
     </Button>
     <TextField fx:id="txtPasswordShown" layoutX="227.0" layoutY="210.0" onKeyPressed="#onEnterKey" prefHeight="30.0" prefWidth="311.0" promptText="password">
         <font>
@@ -54,14 +54,14 @@
             <Tooltip text="Remember user info for later use" />
         </tooltip>
     </CheckBox>
-    <ImageView fitHeight="174.0" fitWidth="200.0" layoutX="20.0" layoutY="106.0" pickOnBounds="true" preserveRatio="true">
-        <Image url="@../img/Accounts_main.png" />
+    <ImageView fitHeight="143.0" fitWidth="146.0" layoutX="48.0" layoutY="124.0" pickOnBounds="true" preserveRatio="true">
+        <Image url="@../img/id%20card.png" />
     </ImageView>
-   <Button fx:id="quitButton" layoutX="327.0" layoutY="311.0" onAction="#quitLogin" onKeyPressed="#onEnterKey" prefHeight="30.0" prefWidth="112.0" style="-fx-background-color: #f6f2f8; -fx-text-fill: #525252; -fx-text-alignment: center; -fx-font-size: 15px; -fx-border-radius: 0 0 0 0;" text="Quit">
-      <cursor>
-         <Cursor fx:constant="HAND" />
-      </cursor>
-   </Button>
+    <Button fx:id="quitButton" layoutX="327.0" layoutY="302.0" onAction="#quitLogin" onKeyPressed="#onEnterKey" prefHeight="30.0" prefWidth="112.0" style="-fx-background-color: #f6f2f8; -fx-text-fill: #525252; -fx-text-alignment: center; -fx-font-size: 15px; -fx-border-radius: 0 0 0 0;" text="Quit">
+        <cursor>
+            <Cursor fx:constant="HAND" />
+        </cursor>
+    </Button>
     <Label fx:id="lblWarnUsername" alignment="BOTTOM_RIGHT" layoutX="401.0" layoutY="105.0" prefHeight="30.0" prefWidth="137.0" text="field requird!" textFill="#263238" visible="false">
         <font>
             <Font name="System Bold" size="14.0" />
