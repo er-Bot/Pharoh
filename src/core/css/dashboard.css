@@ -3,12 +3,6 @@
 }
 
 .button {
-    /*-fx-background-color: white;
-    -fx-text-fill:  #263238;
-    -fx-ripper-fill: white;
-    -fx-border-radius: 500;
-    -fx-border-width:  4;
-    -fx-border-color:  #263238;*/
     -fx-border-color: #263238;
     -fx-background-color: white;
     -fx-text-fill: #263238;

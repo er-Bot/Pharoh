@@ -156,7 +156,6 @@ public class Base implements Initializable {
 
         //Setting Clock within a new Thread
         Runnable clock = this::runClock;
-
         Thread newClock = new Thread(clock); //Creating new thread
         newClock.setDaemon(true); //Thread will automatically close on applications closing
         newClock.start(); //Starting Thread
@@ -239,11 +238,11 @@ public class Base implements Initializable {
 
     public void minimize() {
         Stage stage = (Stage) minBtn.getScene().getWindow();
-        stage.setMaximized(!stage.isMaximized());
+        stage.setMaximized(!(stage.isMaximized()));
     }
 
-    public void hide(MouseEvent mouseEvent) {
+    public void hide() {
         Stage stage = (Stage) hideBtn.getScene().getWindow();
-
+        stage.setIconified(true);
     }
 }

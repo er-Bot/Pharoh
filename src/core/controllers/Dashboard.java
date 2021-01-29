@@ -61,7 +61,7 @@ public class Dashboard implements Initializable {
         lblOutOfStock.setText(stockOut.toString());
     }
 
-    public void loadAgain(ActionEvent event) {
+    public void loadAgain() {
         Connection connection = DBConnection.getConnection();
         try {
             assert connection != null;
@@ -132,17 +132,8 @@ public class Dashboard implements Initializable {
     }
 
     public void showSell() {
-        try {
-            //SellListController.todayFlag = true;
-            Parent sellsList = FXMLLoader.load(getClass().getResource("/main/resources/view/selllist.fxml"));
-            Scene s = new Scene(sellsList);
-            Stage stg = new Stage();
-            stg.setScene(s);
-            stg.setResizable(false);
-            stg.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        SellList.todayFlag = true;
+        SellList.initStage(new Stage());
     }
 
 }

@@ -1,18 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.Cursor?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Line?>
-<?import javafx.scene.text.Font?>
-
+<?import javafx.scene.text.*?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1200.0" style="-fx-background-color: #263238;" stylesheets="@../css/base.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="core.controllers.Base">
 
     <AnchorPane id="leftPane" fx:id="paneLeft" layoutX="14.0" layoutY="-1.0" maxWidth="286.0" minHeight="0.0" minWidth="75.0" prefHeight="700.0" prefWidth="286.0" stylesheets="@../css/base.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -141,22 +134,22 @@
                 </ImageView>
             </graphic>
          </Button>
-         <Button layoutX="151.0" layoutY="62.0" minWidth="42.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="54.0" style="-fx-border-width: 0;" textAlignment="CENTER">
+         <Button layoutX="151.0" layoutY="62.0" minWidth="42.0" onAction="#minimize" mnemonicParsing="false" prefHeight="39.0" prefWidth="54.0" style="-fx-border-width: 0;" textAlignment="CENTER">
             <font>
                <Font name="Courier New Bold" size="12.0" />
             </font>
             <graphic>
-                <ImageView fx:id="minBtn" fitHeight="30.0" fitWidth="30.0" onDragDetected="#minimize" pickOnBounds="true" preserveRatio="true">
+                <ImageView fx:id="minBtn" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                     <Image url="@../img/playstation-square-icon.png" />
                 </ImageView>
             </graphic>
          </Button>
-         <Button layoutX="97.0" layoutY="62.0" minWidth="49.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="54.0" style="-fx-border-radius: 0; -fx-border-width: 0 2 0 0;">
+         <Button layoutX="97.0" layoutY="62.0" minWidth="49.0" onAction="#hide" mnemonicParsing="false" prefHeight="39.0" prefWidth="54.0" style="-fx-border-radius: 0; -fx-border-width: 0 2 0 0;">
             <font>
                <Font name="Courier New" size="12.0" />
             </font>
             <graphic>
-                <ImageView fx:id="hideBtn" fitHeight="30.0" fitWidth="30.0" onDragDetected="#hide" pickOnBounds="true" preserveRatio="true">
+                <ImageView fx:id="hideBtn" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                     <Image url="@../img/minus-svgrepo-com.png" />
                 </ImageView>
             </graphic>
