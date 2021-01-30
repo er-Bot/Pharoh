@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.image.*?>
@@ -7,157 +8,174 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.*?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1200.0" style="-fx-background-color: #263238;" stylesheets="@../css/base.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="core.controllers.Base">
-
-    <AnchorPane id="leftPane" fx:id="paneLeft" layoutX="14.0" layoutY="-1.0" maxWidth="286.0" minHeight="0.0" minWidth="75.0" prefHeight="700.0" prefWidth="286.0" stylesheets="@../css/base.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <AnchorPane layoutY="25.0" prefHeight="118.0" prefWidth="280.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="15.0">
-            <ImageView fitHeight="84.0" fitWidth="100.0" layoutX="19.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">
-                <Image url="@../img/pass.png" />
-            </ImageView>
-            <GridPane layoutX="128.0" layoutY="27.0" prefHeight="64.0" prefWidth="133.0">
-                <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="61.0" minWidth="10.0" prefWidth="49.0" />
-                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="84.0" minWidth="10.0" prefWidth="84.0" />
-                </columnConstraints>
-                <rowConstraints>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                </rowConstraints>
-                <Label fx:id="lblUsername" contentDisplay="CENTER" prefHeight="21.0" prefWidth="83.0" text="username" textAlignment="CENTER" textFill="#23d480" GridPane.columnIndex="1">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </Label>
-                <Label contentDisplay="CENTER" prefHeight="21.0" prefWidth="83.0" text="user :" textAlignment="CENTER" textFill="WHITE">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </Label>
-                <Label fx:id="lblAccessLevel" contentDisplay="CENTER" prefHeight="21.0" prefWidth="83.0" text="Level" textAlignment="CENTER" textFill="#23d480" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </Label>
-                <Label contentDisplay="CENTER" prefHeight="21.0" prefWidth="83.0" text="access :" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="1">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </Label>
-            </GridPane>
-        </AnchorPane>
-        <AnchorPane fx:id="paneMenuHolder" layoutY="180.0" prefHeight="410.0" prefWidth="280.0" AnchorPane.bottomAnchor="130.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="130.0">
-            <Button fx:id="btnDashboard" graphicTextGap="10.0" layoutX="8.0" layoutY="32.0" onAction="#btnNavigators" prefHeight="50.0" prefWidth="264.0" text="Dashboard" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="32.0">
-                <cursor><Cursor fx:constant="HAND" /></cursor>
-                <tooltip><Tooltip text="View Summery of Everything" /></tooltip>
-            </Button>
-            <Button fx:id="btnInventoryItem" contentDisplay="CENTER" graphicTextGap="40.0" layoutX="8.0" layoutY="86.0" onAction="#btnNavigators" prefHeight="50.0" prefWidth="238.0" text="Medicines" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="86.0">
-                <cursor>
-                    <Cursor fx:constant="HAND" />
-                </cursor>
-                <tooltip>
-                    <Tooltip text="Add, Delete, Update, List Inventory Items" />
-                </tooltip>
-            </Button>
-            <Button fx:id="btnCustomers" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="40.0" layoutX="8.0" layoutY="140.0" onAction="#btnNavigators" prefHeight="50.0" prefWidth="238.0" text="Clients" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0">
-                
-                <cursor>
-                    <Cursor fx:constant="HAND" />
-                </cursor>
-                <tooltip>
-                    <Tooltip text="Add, Delete, Update, List Customers" />
-                </tooltip>
-            </Button>
-            <Button fx:id="btnSells" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="40.0" layoutX="8.0" layoutY="194.0" onAction="#btnNavigators" prefHeight="50.0" prefWidth="238.0" text="Sells" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0">
-
-                <cursor>
-                    <Cursor fx:constant="HAND" />
-                </cursor>
-                <tooltip>
-                    <Tooltip text="Issue New Sell, Show History" />
-                </tooltip>
-            </Button>
-            <Button fx:id="btnAccounts" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="40.0" layoutX="8.0" layoutY="302.0" onAction="#btnNavigators" prefHeight="50.0" prefWidth="238.0" text="Updates" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0">
-                <cursor>
-                    <Cursor fx:constant="HAND" />
-                </cursor>
-                <tooltip>
-                    <Tooltip text="Create New Account" />
-                </tooltip>
-            </Button>
-            <Button fx:id="btnAdmin" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="40.0" layoutX="8.0" layoutY="356.0" onAction="#btnNavigators" prefHeight="50.0" prefWidth="238.0" text="Administrator" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0">
-                <cursor>
-                    <Cursor fx:constant="HAND" />
-                </cursor>
-                <tooltip>
-                    <Tooltip text="Show Report, Control Access, Account Mgmt." />
-                </tooltip>
-            </Button>
-            <Button fx:id="btnDueUpdate" alignment="CENTER" graphicTextGap="40.0" layoutX="8.0" layoutY="248.0" onAction="#btnNavigators" prefHeight="50.0" prefWidth="238.0" text="Commands" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0">
-                <cursor>
-                    <Cursor fx:constant="HAND" />
-                </cursor>
-                <tooltip>
-                    <Tooltip text="Update Due" />
-                </tooltip>
-            </Button>
-        </AnchorPane>
-        <AnchorPane fx:id="paneAccountSection" layoutX="7.0" layoutY="589.0" prefHeight="109.0" prefWidth="270.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="7.0" AnchorPane.rightAnchor="9.0">
-            <Button alignment="CENTER" contentDisplay="TOP" graphicTextGap="5.0" layoutX="6.0" layoutY="10.0" onAction="#logOut" prefHeight="90.0" prefWidth="84.0" style="-fx-border-width: 0 2 0 0; -fx-border-radius: 0;" text="Sign Out" AnchorPane.leftAnchor="5.0">
-                <tooltip>
-                    <Tooltip text="Click to log out" />
-                </tooltip>
-                <cursor>
-                    <Cursor fx:constant="HAND" />
-                </cursor>
-            <graphic>
-                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                      <Image url="@../img/log%20out.png" />
-                  </ImageView>
-            </graphic>
-            </Button>
-            <Label fx:id="lblClock" alignment="CENTER" contentDisplay="CENTER" layoutX="111.0" layoutY="14.0" prefHeight="21.0" prefWidth="133.0" text="Clock" textAlignment="CENTER" textFill="#23d480" AnchorPane.leftAnchor="111.0" AnchorPane.rightAnchor="20.0">
-                <font>
-                    <Font name="System Bold" size="14.0" />
-                </font>
-            </Label>
-         <Label fx:id="lblDate" alignment="CENTER" contentDisplay="CENTER" layoutX="111.0" layoutY="35.0" prefHeight="21.0" prefWidth="133.0" text="Date" textAlignment="CENTER" textFill="#23d480">
-            <font>
-               <Font name="System Bold" size="14.0" />
-            </font>
-         </Label>
-         <Button fx:id="closebtn" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" ellipsisString="" graphicTextGap="0.0" layoutX="205.0" layoutY="62.0" mnemonicParsing="false" onAction="#quit" prefHeight="39.0" prefWidth="54.0" style="-fx-border-width: 0 0 0 2; -fx-border-radius: 0;">
-            <font>
-               <Font name="Courier New" size="16.0" />
-            </font>
-            <graphic>
-                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../img/x-button.png" />
-                </ImageView>
-            </graphic>
-         </Button>
-         <Button layoutX="151.0" layoutY="62.0" minWidth="42.0" onAction="#minimize" mnemonicParsing="false" prefHeight="39.0" prefWidth="54.0" style="-fx-border-width: 0;" textAlignment="CENTER">
-            <font>
-               <Font name="Courier New Bold" size="12.0" />
-            </font>
-            <graphic>
-                <ImageView fx:id="minBtn" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../img/playstation-square-icon.png" />
-                </ImageView>
-            </graphic>
-         </Button>
-         <Button layoutX="97.0" layoutY="62.0" minWidth="49.0" onAction="#hide" mnemonicParsing="false" prefHeight="39.0" prefWidth="54.0" style="-fx-border-radius: 0; -fx-border-width: 0 2 0 0;">
-            <font>
-               <Font name="Courier New" size="12.0" />
-            </font>
-            <graphic>
-                <ImageView fx:id="hideBtn" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../img/minus-svgrepo-com.png" />
-                </ImageView>
-            </graphic>
-         </Button>
-        </AnchorPane>
-        <Line endX="298.0" layoutX="-19.0" layoutY="126.0" startX="14.5" stroke="#23d480" strokeLineJoin="ROUND" style="-fx-stroke-width: 4;" AnchorPane.leftAnchor="-5.0" AnchorPane.rightAnchor="0.5" AnchorPane.topAnchor="130.0" />
-      <Line endX="298.0" layoutX="-7.0" layoutY="142.0" startX="14.5" stroke="#23d480" strokeLineJoin="ROUND" style="-fx-stroke-width: 4;" AnchorPane.bottomAnchor="130.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-    </AnchorPane>
-    <AnchorPane layoutX="431.0" layoutY="254.0" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" />
-     <AnchorPane fx:id="paneRight" layoutX="1045.0" layoutY="296.0" prefHeight="698.0" prefWidth="1169.0" style="-fx-background-color: #ffffff;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="290.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+   <BorderPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <center>
+           <AnchorPane fx:id="paneRight" prefHeight="698.0" prefWidth="1169.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER" />
+      </center>
+      <left>
+      
+          <AnchorPane id="leftPane" fx:id="paneLeft" maxWidth="286.0" minHeight="0.0" minWidth="75.0" prefHeight="700.0" prefWidth="286.0" stylesheets="@../css/base.css" BorderPane.alignment="CENTER">
+            <BorderPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <bottom>
+                    <AnchorPane fx:id="paneAccountSection" prefHeight="109.0" prefWidth="270.0" BorderPane.alignment="CENTER">
+                        <Button alignment="CENTER" contentDisplay="TOP" graphicTextGap="5.0" layoutX="6.0" layoutY="10.0" onAction="#logOut" prefHeight="90.0" prefWidth="84.0" style="-fx-border-width: 0 2 0 0; -fx-border-radius: 0;" text="Sign Out" AnchorPane.leftAnchor="5.0">
+                            <tooltip>
+                                <Tooltip text="Click to log out" />
+                            </tooltip>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        <graphic>
+                              <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                  <Image url="@../img/log_out.png" />
+                              </ImageView>
+                        </graphic>
+                        </Button>
+                        <Label fx:id="lblClock" alignment="CENTER" contentDisplay="CENTER" layoutX="111.0" layoutY="14.0" prefHeight="21.0" prefWidth="150.0" text="Clock" textAlignment="CENTER" textFill="#23d480" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="30.0">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                        </Label>
+                     <Label fx:id="lblDate" alignment="CENTER" contentDisplay="CENTER" layoutX="111.0" layoutY="35.0" prefHeight="21.0" prefWidth="150.0" text="Date" textAlignment="CENTER" textFill="#23d480" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="30.0">
+                        <font>
+                           <Font name="System Bold" size="14.0" />
+                        </font>
+                     </Label>
+                     <Button fx:id="closebtn" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" ellipsisString="" graphicTextGap="0.0" layoutX="105.0" layoutY="62.0" mnemonicParsing="false" onAction="#quit" prefHeight="40.0" prefWidth="150.0" style="-fx-border-width: 0 2 0 2; -fx-border-radius: 10; -fx-background-radius: 10;" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="30.0">
+                        <font>
+                           <Font name="Courier New" size="16.0" />
+                        </font>
+                        <graphic>
+                            <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                <Image url="@../img/x-button.png" />
+                            </ImageView>
+                        </graphic>
+                         <tooltip>
+                             <Tooltip text="Log out &amp; Quit " />
+                         </tooltip>
+                     </Button>
+                     <BorderPane.margin>
+                        <Insets bottom="20.0" />
+                     </BorderPane.margin>
+                    </AnchorPane>
+               </bottom>
+               <top>
+                    <AnchorPane prefHeight="118.0" prefWidth="280.0" BorderPane.alignment="CENTER">
+                        <ImageView fitHeight="84.0" fitWidth="100.0" layoutX="19.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">
+                            <Image url="@../img/pass.png" />
+                        </ImageView>
+                        <GridPane layoutX="128.0" layoutY="27.0" prefHeight="64.0" prefWidth="133.0">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="61.0" minWidth="10.0" prefWidth="49.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="84.0" minWidth="10.0" prefWidth="84.0" />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            </rowConstraints>
+                            <Label fx:id="lblUsername" contentDisplay="CENTER" prefHeight="21.0" prefWidth="83.0" text="username" textAlignment="CENTER" textFill="#23d480" GridPane.columnIndex="1">
+                                <font>
+                                    <Font name="System Bold" size="12.0" />
+                                </font>
+                            </Label>
+                            <Label contentDisplay="CENTER" prefHeight="21.0" prefWidth="83.0" text="user :" textAlignment="CENTER" textFill="WHITE">
+                                <font>
+                                    <Font name="System Bold" size="12.0" />
+                                </font>
+                            </Label>
+                            <Label fx:id="lblAccessLevel" contentDisplay="CENTER" prefHeight="21.0" prefWidth="83.0" text="Level" textAlignment="CENTER" textFill="#23d480" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                <font>
+                                    <Font name="System Bold" size="12.0" />
+                                </font>
+                            </Label>
+                            <Label contentDisplay="CENTER" prefHeight="21.0" prefWidth="83.0" text="access :" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="1">
+                                <font>
+                                    <Font name="System Bold" size="12.0" />
+                                </font>
+                            </Label>
+                        </GridPane>
+                     <BorderPane.margin>
+                        <Insets top="20.0" />
+                     </BorderPane.margin>
+                    </AnchorPane>
+               </top>
+               <center>
+                  <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                     <top>
+                          <Line endX="298.0" startX="14.5" stroke="#23d480" strokeLineJoin="ROUND" style="-fx-stroke-width: 4;" BorderPane.alignment="CENTER" />
+                     </top>
+                     <bottom>
+                        <Line endX="298.0" startX="14.5" stroke="#23d480" strokeLineJoin="ROUND" style="-fx-stroke-width: 4;" BorderPane.alignment="CENTER" />
+                     </bottom>
+                     <center>
+                          <AnchorPane fx:id="paneMenuHolder" prefHeight="410.0" prefWidth="280.0" BorderPane.alignment="CENTER">
+                              <Button fx:id="btnDashboard" graphicTextGap="10.0" layoutX="8.0" layoutY="32.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#btnNavigators" prefHeight="50.0" text="Dashboard" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+                                  <cursor>
+                                 <Cursor fx:constant="HAND" />
+                              </cursor>
+                                  <tooltip>
+                                 <Tooltip text="View Summery of Everything" />
+                              </tooltip>
+                              </Button>
+                              <Button fx:id="btnInventoryItem" contentDisplay="CENTER" graphicTextGap="40.0" layoutX="8.0" layoutY="86.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#btnNavigators" prefHeight="50.0" text="Medicines" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+                                  <cursor>
+                                      <Cursor fx:constant="HAND" />
+                                  </cursor>
+                                  <tooltip>
+                                      <Tooltip text="Add, Delete, Update, List Inventory Items" />
+                                  </tooltip>
+                              </Button>
+                              <Button fx:id="btnCustomers" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="40.0" layoutX="8.0" layoutY="140.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#btnNavigators" prefHeight="50.0" text="Clients" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+                  
+                                  <cursor>
+                                      <Cursor fx:constant="HAND" />
+                                  </cursor>
+                                  <tooltip>
+                                      <Tooltip text="Add, Delete, Update, List Customers" />
+                                  </tooltip>
+                              </Button>
+                              <Button fx:id="btnSells" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="40.0" layoutX="8.0" layoutY="194.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#btnNavigators" prefHeight="50.0" text="Sells" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+                  
+                                  <cursor>
+                                      <Cursor fx:constant="HAND" />
+                                  </cursor>
+                                  <tooltip>
+                                      <Tooltip text="Issue New Sell, Show History" />
+                                  </tooltip>
+                              </Button>
+                              <Button fx:id="btnAccounts" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="40.0" layoutX="8.0" layoutY="302.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#btnNavigators" prefHeight="50.0" text="Updates" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+                                  <cursor>
+                                      <Cursor fx:constant="HAND" />
+                                  </cursor>
+                                  <tooltip>
+                                      <Tooltip text="Create New Account" />
+                                  </tooltip>
+                              </Button>
+                              <Button fx:id="btnAdmin" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="40.0" layoutX="8.0" layoutY="356.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#btnNavigators" prefHeight="50.0" text="Administrator" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+                                  <cursor>
+                                      <Cursor fx:constant="HAND" />
+                                  </cursor>
+                                  <tooltip>
+                                      <Tooltip text="Show Report, Control Access, Account Mgmt." />
+                                  </tooltip>
+                              </Button>
+                              <Button fx:id="btnDueUpdate" alignment="CENTER" graphicTextGap="40.0" layoutX="8.0" layoutY="248.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#btnNavigators" prefHeight="50.0" text="Commands" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+                                  <cursor>
+                                      <Cursor fx:constant="HAND" />
+                                  </cursor>
+                                  <tooltip>
+                                      <Tooltip text="Update Due" />
+                                  </tooltip>
+                              </Button>
+                           <BorderPane.margin>
+                              <Insets />
+                           </BorderPane.margin>
+                          </AnchorPane>
+                     </center>
+                  </BorderPane>
+               </center>
+            </BorderPane>
+          </AnchorPane>
+      </left>
+   </BorderPane>
 </AnchorPane>

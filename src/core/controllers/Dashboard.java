@@ -1,14 +1,12 @@
 package core.controllers;
 
 import core.db.DBConnection;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
+import javafx.scene.layout.AnchorPane;
 
 import java.io.IOException;
 import java.net.URL;
@@ -17,25 +15,27 @@ import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 public class Dashboard implements Initializable {
+    public Label lblOutOfStock;
+    public Label lblTotalBought;
+    public Label lblTotalSold;
+    public Label lblTotalNet;
     public Button btnTodaySell;
     public Label lblTodaySellCtr;
     public Label lblTodaysSellAmount;
-    public Button btnTodayRental;
-    public Label lblTodaysRentalCtr;
-    public Label lblTodaysRentalAmount;
+    public Button btnTodayBuy;
+    public Label lblTodaysBuyCtr;
+    public Label lblTodaysBuyAmount;
     public Button loadAgain;
-    public Label lblOutOfStock;
-    public Label lblTotalDueAmount;
-    public Label lblTodaysDueAmount;
 
-    public static Integer todaysRentalCtr = 0;
-    public static Integer totalDueCtr = 0;
+    public static Integer todaysBuyCtr = 0;
     public static Integer todaySellCtr = 0;
-    public static Double todaysTotalDue = 0.0;
     public static Double todaysTotalSell = 0.0;
-    public static Double todayTotalRental = 0.0;
-    public static Double totalDueAmount = 0.0;
+    public static Double todayTotalBought = 0.0;
+    public static Double totalSell = 0.0;
+    public static Double totalBought = 0.0;
     public static Integer stockOut = 0;
+
+    public static Base base;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -43,21 +43,13 @@ public class Dashboard implements Initializable {
     }
 
     private void setFields() {
-        //Setting total due amount
-        lblTotalDueAmount.setText(totalDueAmount.toString() + " $");
-
-        //Setting todays sell amount
+        lblTotalBought.setText(totalBought.toString() + " $");
+        lblTotalSold.setText(totalSell.toString() + " $");
         lblTodaySellCtr.setText(todaySellCtr.toString());
         lblTodaysSellAmount.setText(todaysTotalSell.toString() + " $");
-
-        //Setting todays rent amount
-        lblTodaysRentalAmount.setText(todayTotalRental.toString() + " $");
-        lblTodaysRentalCtr.setText(todaysRentalCtr.toString());
-
-        //Setting todays due
-        lblTodaysDueAmount.setText(todaysTotalDue.toString() + " $");
-
-        //Setting out of stock
+        lblTodaysBuyCtr.setText(todaysBuyCtr.toString());
+        lblTodaysBuyAmount.setText(todayTotalBought.toString() + " $");
+        lblTotalNet.setText((totalSell - totalBought) + " $");
         lblOutOfStock.setText(stockOut.toString());
     }
 
@@ -70,30 +62,39 @@ public class Dashboard implements Initializable {
             PreparedStatement getTodaysPurchase = connection.prepareStatement("SELECT COUNT(*), SUM(scmd_total) FROM supplier_command WHERE scmd_date = '"+ Date.valueOf(LocalDate.now()) + "'");
             PreparedStatement getOutOfStock = connection.prepareStatement("SELECT * FROM medicine WHERE medi_stock_qte =" + 0);
 
+            PreparedStatement getTotalSell = connection.prepareStatement("SELECT SUM(ccmd_total) FROM client_command");
+            PreparedStatement getTotalPurchase = connection.prepareStatement("SELECT SUM(scmd_total) FROM supplier_command");
+
             ResultSet todaysSell = getTodaysSell.executeQuery();
-            ResultSet todaysRent = getTodaysPurchase.executeQuery();
+            ResultSet todaysPurchase = getTodaysPurchase.executeQuery();
+            ResultSet TotalSell = getTodaysSell.executeQuery();
+            ResultSet TtalPurchase = getTodaysPurchase.executeQuery();
             ResultSet stockOutRs = getOutOfStock.executeQuery();
 
-            double tDAmount = 0.0; //Total Due Amount
-
-
-            double tSell = 0.0; //Today's sell
-            double tRent = 0.0; //Today's rent
-            int rCount = 0;
+            double todSell = 0.0; //Today's sell
+            double todBuy = 0.0; //Today's rent
+            double totSell = 0.0; //Today's sell
+            double totBuy = 0.0; //Today's rent
+            int pCount = 0;
             int sCount = 0;
 
             while (todaysSell.next()) {
                 sCount += todaysSell.getInt(1);
-                tSell += todaysSell.getDouble(2);
+                todSell += todaysSell.getDouble(2);
             }
 
-            while (todaysRent.next()) {
-                rCount += todaysRent.getInt(1);
-                tRent += todaysRent.getDouble(2);
+            while (todaysPurchase.next()) {
+                pCount += todaysPurchase.getInt(1);
+                todBuy += todaysPurchase.getDouble(2);
             }
 
-            double todayDAmount = 0.0;
-            Integer dCtr = 0;
+            while (TotalSell.next()) {
+                totSell += TotalSell.getDouble(1);
+            }
+
+            while (TtalPurchase.next()) {
+                totBuy += TtalPurchase.getDouble(1);
+            }
 
             int sOCtr = 0;
 
@@ -101,39 +102,43 @@ public class Dashboard implements Initializable {
                 sOCtr += 1;
             }
 
-            totalDueAmount = tDAmount;
             todaySellCtr = sCount;
-            todaysTotalSell = tSell;
-            todaysRentalCtr = rCount;
-            todayTotalRental = tRent;
-            todaysTotalDue = todayDAmount;
+            todaysTotalSell = todSell;
+            todaysBuyCtr = pCount;
+            todayTotalBought = todBuy;
+            totalSell = totSell;
+            totalBought = totBuy;
             stockOut = sOCtr;
 
             //Setting values on the fields
             setFields();
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     public void showRent() {
-        try {
-            //RentalListController.todayFlag = true;
-            Parent rentList = FXMLLoader.load(getClass().getResource("/main/resources/view/rentallist.fxml"));
-            Scene s = new Scene(rentList);
-            Stage stg = new Stage();
-            stg.setScene(s);
-            stg.setResizable(false);
-            stg.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        loadTable("/core/view/commandlist.fxml");
     }
 
     public void showSell() {
         SellList.todayFlag = true;
-        SellList.initStage(new Stage());
+        loadTable("/core/view/selllist.fxml");
+    }
+
+    private void loadTable(String url){
+        try {
+            Scene scn = btnTodaySell.getScene();
+            AnchorPane anch = (AnchorPane) scn.lookup("#paneRight");
+            anch.getChildren().clear();
+            AnchorPane pane = FXMLLoader.load(getClass().getResource(url));
+            pane.setPrefHeight(anch.getHeight());
+            pane.setPrefWidth(anch.getWidth());
+
+            anch.getChildren().add(pane);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

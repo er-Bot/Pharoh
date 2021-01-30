@@ -4,23 +4,16 @@ import core.db.Command;
 import core.db.DBConnection;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
-import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class SellList implements Initializable {
 
@@ -106,33 +99,6 @@ public class SellList implements Initializable {
 
             tblRecent.setItems(list);
         } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void initStage(Stage stg){
-        try {
-            AtomicReference<Double> x = new AtomicReference<>((double) 0);
-            AtomicReference<Double> y = new AtomicReference<>((double) 0);
-
-            Parent sellsList = FXMLLoader.load(SellList.class.getResource("/core/view/selllist.fxml"));
-            Scene s = new Scene(sellsList);
-            stg.setScene(s);
-            stg.initStyle(StageStyle.UNDECORATED);
-            stg.setResizable(false);
-
-            // drag ability
-            sellsList.setOnMousePressed(event -> {
-                x.set(event.getSceneX());
-                y.set(event.getSceneY());
-            });
-            sellsList.setOnMouseDragged(event -> {
-                stg.setX(event.getScreenX() - x.get());
-                stg.setY(event.getScreenY() - y.get());
-            });
-
-            stg.show();
-        } catch (IOException e) {
             e.printStackTrace();
         }
     }

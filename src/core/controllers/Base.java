@@ -9,8 +9,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -46,28 +46,29 @@ public class Base implements Initializable {
     public Label lblDate;
     public ImageView minBtn;
     public ImageView hideBtn;
-    private AnchorPane newRightPane = null;
+    private BorderPane newRightPane = null;
     private Button temp = null;
     private Button recover = null;
     private static boolean anchorFlag = false;
-    /** store locations of core.view files and it will be used to navigate between different menus */
-    private HashMap<String, String> FXML_URL = new HashMap<>();
 
-    /**
-     * This method will resize right pane size
-     * relative to it's parent whenever window is resized
-     */
+
+    private final HashMap<String, String> FXML_URL = new HashMap<>();
+    private void loadFXMLMap() {
+        FXML_URL.put("Login", "/core/view/login.fxml");
+        FXML_URL.put("Items", "/core/view/inventory.fxml");
+        FXML_URL.put("Customers", "/core/view/customer.fxml");
+        FXML_URL.put("Dashboard", "/core/view/dashboard.fxml");
+        FXML_URL.put("Sells", "/core/view/sells.fxml");
+        FXML_URL.put("Rentals", "/core/view/rentals.fxml");
+        FXML_URL.put("Accounts", "/core/view/accounts.fxml");
+        FXML_URL.put("Administrative", "/core/view/administrator.fxml");
+        FXML_URL.put("Update Due", "/core/view/dueupdate.fxml");
+    }
+
     private void autoResizePane() {
         newRightPane.setPrefWidth(paneRight.getWidth());
         newRightPane.setPrefHeight(paneRight.getHeight());
     }
-
-    /**
-     * This method will help to set appropriate right pane contents
-     * respective to the left pane selection and will make it responsive if
-     * any window resize occurs
-     * @param URL: main.resources.view file path; scene
-     */
 
     public void ctrlRightPane(String URL) {
         try {
@@ -84,17 +85,10 @@ public class Base implements Initializable {
                 // Some components of the scene will be resized automatically
                 autoResizePane();
             });
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-    /**
-     * The method here is universal method for all the navigators from left
-     * pane which will identify the selection by user and
-     * set the respective right pane FXML
-     */
 
     public void btnNavigators(ActionEvent event) {
         borderSelector(event); //Marking selected navigator button
@@ -109,25 +103,6 @@ public class Base implements Initializable {
         ctrlRightPane(FXML_URL.get(btnText));
     }
 
-    private void loadFXMLMap() {
-        // Adding URLS in the FXML_URL ArrayList field
-        // to avoid code redundancy in ctrlRightPane() method
-        FXML_URL.put("Login", "/core/view/login.fxml");
-        FXML_URL.put("Items", "/core/view/inventory.fxml");
-        FXML_URL.put("Customers", "/core/view/customer.fxml");
-        FXML_URL.put("Dashboard", "/core/view/dashboard.fxml");
-        FXML_URL.put("Sells", "/core/view/sells.fxml");
-        FXML_URL.put("Rentals", "/core/view/rentals.fxml");
-        FXML_URL.put("Accounts", "/core/view/accounts.fxml");
-        FXML_URL.put("Administrative", "/core/view/administrator.fxml");
-        FXML_URL.put("Update Due", "/core/view/dueupdate.fxml");
-    }
-
-    /**
-     * This method will mark selected navigator
-     * from left navigation pane and will remove it if another
-     * navition button is clicked.
-     */
     private void borderSelector(ActionEvent event) {
         Button btn = (Button)event.getSource();
 
@@ -182,10 +157,6 @@ public class Base implements Initializable {
         }
     }
 
-    /**
-     * Upon logging out this method will set log in prompt on
-     * screen by closing main application
-     */
     public void logOut() {
         Stage current = (Stage)lblUsername.getScene().getWindow();
         current.close();
@@ -230,19 +201,8 @@ public class Base implements Initializable {
         }
     }
 
-
     public void quit() {
         Stage stage = (Stage) closebtn.getScene().getWindow();
         stage.close();
-    }
-
-    public void minimize() {
-        Stage stage = (Stage) minBtn.getScene().getWindow();
-        stage.setMaximized(!(stage.isMaximized()));
-    }
-
-    public void hide() {
-        Stage stage = (Stage) hideBtn.getScene().getWindow();
-        stage.setIconified(true);
     }
 }
