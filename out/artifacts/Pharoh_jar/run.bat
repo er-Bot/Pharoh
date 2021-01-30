@@ -1,0 +1,1 @@
+java --module-path javafx/lib/ --add-modules=javafx.fxml,javafx.controls,javafx.graphics -jar Pharoh.jar
