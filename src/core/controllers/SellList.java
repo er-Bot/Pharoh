@@ -57,7 +57,6 @@ public class SellList implements Initializable {
                 e.printStackTrace();
             }
         } else {
-            lblHeader.setText("Sells Report");
             try {
                 assert con != null;
                 getSellsList = con.prepareStatement("SELECT * FROM client_command");
