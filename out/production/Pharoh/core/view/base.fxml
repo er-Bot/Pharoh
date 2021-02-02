@@ -45,6 +45,9 @@
                         <font>
                            <Font name="Courier New" size="16.0" />
                         </font>
+                         <cursor>
+                             <Cursor fx:constant="HAND" />
+                         </cursor>
                         <graphic>
                             <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                 <Image url="@../img/x-button.png" />
@@ -117,7 +120,7 @@
                                  <Tooltip text="View Summery of Everything" />
                               </tooltip>
                               </Button>
-                              <Button fx:id="btnInventoryItem" contentDisplay="CENTER" graphicTextGap="40.0" layoutX="8.0" layoutY="86.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#btnNavigators" prefHeight="50.0" text="Medicines" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+                              <Button fx:id="btnInventoryItem" contentDisplay="CENTER" graphicTextGap="40.0" layoutX="8.0" layoutY="86.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#btnNavigators" prefHeight="50.0" text="Inventory" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
                                   <cursor>
                                       <Cursor fx:constant="HAND" />
                                   </cursor>

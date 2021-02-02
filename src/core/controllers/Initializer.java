@@ -1,6 +1,5 @@
 package core.controllers;
 
-import core.db.Client;
 import core.db.DBConnection;
 import core.db.Medicine;
 import javafx.collections.FXCollections;
@@ -17,16 +16,17 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.*;
-import java.time.LocalDate;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Initializer implements Initializable {
 
-    private static final int THREAD_SLEEP_INTERVAL = 100;
+    private static final int THREAD_SLEEP_INTERVAL = 50;
     @FXML
     public ProgressBar progressIndicator;
     @FXML
@@ -88,240 +88,73 @@ public class Initializer implements Initializable {
         @Override
         protected Object call() throws SQLException, InterruptedException {
             Connection con = DBConnection.getConnection();
-
-            //Creating OLs to save values from result set
-            ObservableList<Client> clientsList = FXCollections.observableArrayList();
-            ObservableList<Medicine> medicineList = FXCollections.observableArrayList();
-
             assert con != null;
-            // General tables
-            PreparedStatement getClientList = con.prepareStatement("select * from client");
-            PreparedStatement getMedicineList = con.prepareStatement("select * from medicine order by medi_id");
-            PreparedStatement getCCmdList = con.prepareStatement("select * from client_command order by(ccmd_id) desc");
-            PreparedStatement getSCmdList = con.prepareStatement("select * from supplier_command order by(scmd_id) desc");
-
-            ResultSet medicineRS = getMedicineList.executeQuery();
-            ResultSet clientRS = getClientList.executeQuery();
-            ResultSet ccmdRS = getCCmdList.executeQuery();
-            ResultSet scmdRS = getSCmdList.executeQuery();
-            
-            //Dashboard Statements
-            PreparedStatement getTodaysSell = con.prepareStatement("select count(*), sum(ccmd_total) from client_command where ccmd_date = '"+ Date.valueOf(LocalDate.now()) + "'");
-            PreparedStatement getTodaysPurchase = con.prepareStatement("select count(*), sum(scmd_total) from supplier_command where scmd_date = '"+ Date.valueOf(LocalDate.now()) + "'");
-            PreparedStatement getOutOfStock = con.prepareStatement("select * from medicine where medi_stock_qte = " + 0);
-            ResultSet todaysSell = getTodaysSell.executeQuery();
-            ResultSet todaysPurchace = getTodaysPurchase.executeQuery();
-            ResultSet outOfStock = getOutOfStock.executeQuery();
-
-            //Updating task message
-            this.updateMessage("Loading Clients...");
-            Thread.sleep(THREAD_SLEEP_INTERVAL);
-
-            ArrayList<String> clientIDNameHolder = new ArrayList<>(); //Will store ID and Name from ResultSet
-            ArrayList<String> clientName = new ArrayList<>();
-            ArrayList<Integer> clientID = new ArrayList<>();
-            ArrayList<String> medicineIDNameForSale = new ArrayList<>(); //Will hold medicine id name for sell
-            ArrayList<Integer> medicineIDForSale = new ArrayList<>();
-            ArrayList<String> medicineIDNameForRentals = new ArrayList<>(); //Will hold medicine id name for rent
-            ArrayList<Integer> medicineIDForRent = new ArrayList<>();
-            ArrayList<String> medicineNames = new ArrayList<>();
-            TreeMap<String, Integer> medicineTypeTree = new TreeMap<>();
-
-            // Getting values from clients result set
-            while(clientRS.next()) {
-                clientIDNameHolder.add(clientRS.getInt(1) + " | "
-                        + clientRS.getString(2) + "  "
-                        + clientRS.getString(3));
-
-                clientName.add(clientRS.getString(2)); //Adding first Name
-                clientName.add(clientRS.getString(3)); //Adding last name
-
-                Client newClient = new Client(
-                        clientRS.getInt("clt_id"),
-                        clientRS.getString("clt_fname"),
-                        clientRS.getString("clt_lname"),
-                        clientRS.getString("clt_sex"),
-                        clientRS.getString("clt_address"),
-                        clientRS.getString("clt_tel"),
-                        clientRS.getString("clt_order_doct"),
-                        clientRS.getString("clt_order_num")
-                );
-
-                clientsList.add(newClient);
-
-                clientID.add(clientRS.getInt(1));
-            }
-
-            //Setting fields in Clients List
-            ClientController.clientsList = clientsList;
-            ClientController.clientNames = clientName;
-
-            //Setting Id and Name to SellsController
-            SellsController.clientIDName = clientIDNameHolder;
-            SellsController.clientID = clientID;
 
             Thread.sleep(THREAD_SLEEP_INTERVAL);
-            //Updating Task status
             this.updateMessage("Loading Medicines...");
 
+            ObservableList<Medicine> medicineList = FXCollections.observableArrayList();
+            ArrayList<String> medicineNames = new ArrayList<>();
+
+            PreparedStatement getMedicineList = con.prepareStatement("select * from medicine order by medi_id");
+            ResultSet medicineRS = getMedicineList.executeQuery();
+
             while(medicineRS.next()) {
-                Medicine medicine = new Medicine(medicineRS.getInt("medi_id"),
-                        medicineRS.getString("medi_name"),
-                        medicineRS.getDate("medi_expire_date"),
-                        medicineRS.getDouble("medi_pu"),
-                        medicineRS.getDouble("medi_stock_ste"),
-                        medicineRS.getString("medi_desc"),
-                        medicineRS.getString("medi_dci"),
-                        medicineRS.getString("medi_form"),
-                        medicineRS.getDouble("medi_dose")
-                );
-
-                medicineNames.add(medicineRS.getString("medi_name"));
-
+                Medicine medicine = Medicine.getInstance(medicineRS);
                 medicineList.add(medicine);
-
+                medicineNames.add(medicine.getMedi_name());
             }
+            System.out.println(medicineList);
 
-            //Setting Observable Lists to the static field of StockController
-            StockController.medicineList = medicineList;
-            StockController.medicineNames = medicineNames;
-            SellsController.inventoryMedicine = medicineIDNameForSale; //Setting medicine id and name for sale & RentalsController
-            SellsController.medicineIDForSale = medicineIDForSale;
-            PurchaseController.inventoryMedicine = medicineIDNameForRentals;
-            PurchaseController.medicineIDForRent = medicineIDForRent;
+            Inventory.medicineList = medicineList;
+            Inventory.medicineNames = medicineNames;
 
             Thread.sleep(THREAD_SLEEP_INTERVAL);
-/*
-            //Updating task status
-            this.updateMessage("Loading Sells...");
-            ObservableList<Purchase> sellsListByUser = FXCollections.observableArrayList();
-
-            while(sellsList.next()) {
-                sellsListByUser.add(new Purchase(sellsList.getInt("purchaseID"),
-                        sellsList.getInt("Clients_clientID"),
-                        sellsList.getInt("Medicine_medicineID"),
-                        sellsList.getString("purchaseDate"),
-                        sellsList.getInt("purchaseQuantity"),
-                        sellsList.getDouble("payAmount"),
-                        sellsList.getDouble("amountDue")));
-
-            }
-
-            //Setting Purchases on Sell Class
-            SellsController.purchaseList = sellsListByUser;
-
-            Thread.sleep(THREAD_SLEEP_INTERVAL);
-
-            //Updating Task Status
-            this.updateMessage("Loading Rentals...");
-            ObservableList<Rent> rentsListByUser = FXCollections.observableArrayList();
-
-            while (rentList.next()) {
-                rentsListByUser.add(new Rent(rentList.getInt("rentalID"),
-                        rentList.getInt("Medicine_medicineID"),
-                        rentList.getInt("Clients_clientID"),
-                        rentList.getString("rentalDate"),
-                        rentList.getString("returnDate"),
-                        rentList.getDouble("paid"),
-                        rentList.getDouble("amountDue")));
-            }
-
-            //Setting Rents on Rental Class
-            RentalsController.rentalList = rentsListByUser;
-
-            Thread.sleep(THREAD_SLEEP_INTERVAL);
-
-            //Updating task status
-            this.updateMessage("Loading Accounts...");
-
-            ObservableList<Account> accountListByUser = FXCollections.observableArrayList();
-            ArrayList<String> accountNames = new ArrayList<>();
-
-            while(accountResultSet.next()) {
-                accountListByUser.add(new Account(accountResultSet.getInt(3),
-                        accountResultSet.getString(1) + " " + accountResultSet.getString(2),
-                        accountResultSet.getString(4),
-                        accountResultSet.getString(5)));
-                accountNames.add(accountResultSet.getString(4));
-            }
-
-            //Setting Accounts on AccountController Class
-            AccountController.accountList = accountListByUser;
-            AccountController.accountNames = accountNames;
-
-            Thread.sleep(THREAD_SLEEP_INTERVAL);
-
-            //Updating Task Message
-            //DashboardController contents
             this.updateMessage("Loading Dashboard Contents...");
 
-            double totalDueAmount = 0.0;
-            int totalDueCtr = 0;
-
-            while (rentalDue.next()) {
-                totalDueCtr += rentalDue.getInt(1);
-                totalDueAmount += rentalDue.getDouble(2);
-            }
-
-            while (purchaseDue.next()) {
-                totalDueCtr += purchaseDue.getInt(1);
-                totalDueAmount += purchaseDue.getDouble(2);
-            }
+            PreparedStatement getTodaysSell = con.prepareStatement("select count(*), sum(CCMD_TOTAL) from CLIENT_COMMAND where trunc(CCMD_DATE) = trunc(sysdate)");
+            ResultSet todaysSell = getTodaysSell.executeQuery();
+            PreparedStatement getTotalSell = con.prepareStatement("select sum(CCMD_TOTAL) from CLIENT_COMMAND");
+            ResultSet totalSells = getTotalSell.executeQuery();
+            PreparedStatement getTodaysPurchase = con.prepareStatement("select count(*), sum(SCMD_TOTAL) from SUPPLIER_COMMAND where trunc(SCMD_DATE) = trunc(sysdate)");
+            ResultSet todaysPurchace = getTodaysPurchase.executeQuery();
+            PreparedStatement getTotalPurchase = con.prepareStatement("select sum(SCMD_TOTAL) from SUPPLIER_COMMAND");
+            ResultSet totalPurchaces = getTotalPurchase.executeQuery();
+            PreparedStatement getOutOfStock = con.prepareStatement("select count(*) from MEDICINE where MEDI_STOCK_QTE = 0");
+            ResultSet stockOut = getOutOfStock.executeQuery();
 
             double todaySell = 0.0;
-            double todayRent = 0.0;
-            int rentCount = 0;
+            double totalSell = 0;
+            double todayPurchase = 0.0;
+            double totalPurchase = 0;
+            int purchaseCount = 0;
             int sellCount = 0;
+            int  stockOutCtr = 0;
 
-            while (todaysSell.next()) {
+            while(todaysSell.next()) {
                 sellCount += todaysSell.getInt(1);
                 todaySell += todaysSell.getDouble(2);
             }
-
-            while (todaysRent.next()) {
-                rentCount += todaysRent.getInt(1);
-                todayRent += todaysRent.getDouble(2);
+            while(totalSells.next()) {
+                totalSell += totalSells.getDouble(1);
             }
-
-            double todaysDueAmount = 0.0;
-            int dueCtr = 0;
-
-            while (todaysRentDue.next()) {
-                dueCtr += todaysRentDue.getInt(1);
-                todaysDueAmount += todaysRentDue.getDouble(2);
+            while (todaysPurchace.next()) {
+                purchaseCount += todaysPurchace.getInt(1);
+                todayPurchase += todaysPurchace.getDouble(2);
             }
-
-            while (todysPurchaseDue.next()) {
-                dueCtr += todysPurchaseDue.getInt(1);
-                todaysDueAmount += todysPurchaseDue.getDouble(2);
+            while (totalPurchaces.next()) {
+                totalPurchase += totalPurchaces.getDouble(1);
             }
+            while (stockOut.next())
+                stockOutCtr += stockOut.getInt(1);
 
-            int stockOutCtr = 0;
-
-            while (stockOut.next()) {
-                stockOutCtr += 1;
-            }
-
-            //Setting on DashboardController
-            DashboardController.totalDueCtr = totalDueCtr;
-            DashboardController.totalDueAmount = totalDueAmount;
-            DashboardController.todaySellCtr = sellCount;
-            DashboardController.todaysTotalSell = todaySell;
-            DashboardController.todaysRentalCtr = rentCount;
-            DashboardController.todayTotalRental = todayRent;
-            DashboardController.todaysTotalDue = todaysDueAmount;
-            DashboardController.stockOut = stockOutCtr;
-
-            Thread.sleep(THREAD_SLEEP_INTERVAL);
-            this.updateMessage("Loading Medicine Types....");
-
-            while (medicineType.next()) {
-                medicineTypeTree.put(medicineType.getString(2), medicineType.getInt(1));
-                medicineTypeName.add(medicineType.getString(2));
-            }
-
-            StockController.medicineType = medicineTypeTree;
-            StockController.medicineTypeNames = medicineTypeName;*/
+            Dashboard.todaySellCtr = sellCount;
+            Dashboard.todaysTotalSell = todaySell;
+            Dashboard.todayTotalBought = todayPurchase;
+            Dashboard.todaysBuyCtr = purchaseCount;
+            Dashboard.stockOut = stockOutCtr;
+            Dashboard.totalBought = totalPurchase;
+            Dashboard.totalSell = totalSell;
 
             //Updating Status of the Task
             this.updateMessage("Loading Finished!");

@@ -67,14 +67,14 @@ public class Dashboard implements Initializable {
 
             ResultSet todaysSell = getTodaysSell.executeQuery();
             ResultSet todaysPurchase = getTodaysPurchase.executeQuery();
-            ResultSet TotalSell = getTodaysSell.executeQuery();
-            ResultSet TtalPurchase = getTodaysPurchase.executeQuery();
+            ResultSet TotalSell = getTotalSell.executeQuery();
+            ResultSet TtalPurchase = getTotalPurchase.executeQuery();
             ResultSet stockOutRs = getOutOfStock.executeQuery();
 
-            double todSell = 0.0; //Today's sell
-            double todBuy = 0.0; //Today's rent
-            double totSell = 0.0; //Today's sell
-            double totBuy = 0.0; //Today's rent
+            double todSell = 0.0;
+            double todBuy = 0.0;
+            double totSell = 0.0;
+            double totBuy = 0.0;
             int pCount = 0;
             int sCount = 0;
 

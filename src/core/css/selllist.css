@@ -1,0 +1,18 @@
+.root {
+    -fx-background-color: white;
+}
+
+.button {
+    -fx-background-color: white;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-ripper-fill: white;
+}
+
+.button:hover {
+    -fx-background-color: #eceff1;;
+}
+
+.button:pressed:hover {
+    -fx-background-color: white;
+}

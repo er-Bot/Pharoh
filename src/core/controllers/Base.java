@@ -8,7 +8,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -44,20 +43,20 @@ public class Base implements Initializable {
     private static String accessLevel = "";
     public Button closebtn;
     public Label lblDate;
-    public ImageView minBtn;
-    public ImageView hideBtn;
     private BorderPane newRightPane = null;
     private Button temp = null;
     private Button recover = null;
     private static boolean anchorFlag = false;
 
+    public static Base currentBase;
 
-    private final HashMap<String, String> FXML_URL = new HashMap<>();
+    public final HashMap<String, String> FXML_URL = new HashMap<>();
     private void loadFXMLMap() {
         FXML_URL.put("Login", "/core/view/login.fxml");
-        FXML_URL.put("Items", "/core/view/inventory.fxml");
+        FXML_URL.put("Inventory", "/core/view/inventory.fxml");
         FXML_URL.put("Customers", "/core/view/customer.fxml");
         FXML_URL.put("Dashboard", "/core/view/dashboard.fxml");
+        FXML_URL.put("SellList", "/core/view/selllist.fxml");
         FXML_URL.put("Sells", "/core/view/sells.fxml");
         FXML_URL.put("Rentals", "/core/view/rentals.fxml");
         FXML_URL.put("Accounts", "/core/view/accounts.fxml");
@@ -91,8 +90,6 @@ public class Base implements Initializable {
     }
 
     public void btnNavigators(ActionEvent event) {
-        borderSelector(event); //Marking selected navigator button
-
         Button btn = (Button)event.getSource();
 
         // Getting navigation button label
@@ -101,19 +98,6 @@ public class Base implements Initializable {
         // Checking which button is clicked from the map
         // and navigating to respective menu
         ctrlRightPane(FXML_URL.get(btnText));
-    }
-
-    private void borderSelector(ActionEvent event) {
-        Button btn = (Button)event.getSource();
-
-        if(temp == null) {
-            temp = btn; //Saving current button properties
-        } else {
-            temp.setStyle(""); //Resetting previous selected button properties
-            temp = btn; //Saving current button properties
-        }
-
-        btn.setStyle("-fx-background-color: #455A64");
     }
 
     @Override
@@ -136,7 +120,9 @@ public class Base implements Initializable {
         newClock.start(); //Starting Thread
 
         //Setting DashboardController on RightPane
-        ctrlRightPane("/core/view/dashboard.fxml");
+        ctrlRightPane(FXML_URL.get("Dashboard"));
+
+        currentBase = this;
     }
 
     private void runClock() {

@@ -1,10 +1,11 @@
 package core.controllers;
 
-import core.db.Command;
+import core.db.ClientCommand;
 import core.db.DBConnection;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -17,22 +18,23 @@ import java.util.ResourceBundle;
 
 public class SellList implements Initializable {
 
-    public TableView<Command> tblRecent;
-    public TableColumn<Command, Integer> ccmd_id;
-    public TableColumn<Command, Integer> clt_id;
-    public TableColumn<Command, Integer> medi_id;
-    public TableColumn<Command, Date> ccmd_date;
-    public TableColumn<Command, Integer> ccl_qty;
-    public TableColumn<Command, Double> ccmd_total;
-    public TableColumn<Command, String> empl_name;
+    public TableView<ClientCommand> tblRecent;
+    public TableColumn<ClientCommand, Integer> ccmd_id;
+    public TableColumn<ClientCommand, Integer> clt_id;
+    public TableColumn<ClientCommand, Integer> medi_id;
+    public TableColumn<ClientCommand, Date> ccmd_date;
+    public TableColumn<ClientCommand, Integer> ccl_qty;
+    public TableColumn<ClientCommand, Double> medi_pu;
+    public TableColumn<ClientCommand, Double> ccmd_total;
     public Label lblSellCount;
-    public Label lblDue;
     public Label lblAmount;
     public Label lblHeader;
     public Label today;
 
     public static boolean todayFlag = false;
+    public Button backBtn;
     PreparedStatement getSellsList;
+    private int ctr;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -42,7 +44,13 @@ public class SellList implements Initializable {
             lblHeader.setText("Today's Sells Report");
             try {
                 assert con != null;
-                getSellsList = con.prepareStatement("SELECT * FROM client_command WHERE ccmd_date ='"+ Date.valueOf(LocalDate.now()) +"'");
+                getSellsList = con.prepareStatement("select CLIENT_COMMAND.CCMD_ID as \"command\", CLT_ID as \"client\", MEDICINE.MEDI_ID as \"medicine\", CCMD_DATE as \"date\", CCL_QTE as \"quantity\", MEDI_PU as \"price\", CCL_QTE * MEDI_PU as \"amount\"\n" +
+                        "from CLIENT_COMMAND, CLIENT_COMMAND_LINE, MEDICINE\n" +
+                        "where CLIENT_COMMAND.CCMD_ID = CLIENT_COMMAND_LINE.CCMD_ID and trunc(CCMD_DATE) = trunc(sysdate) and MEDICINE.MEDI_ID = CLIENT_COMMAND_LINE.MEDI_ID");
+                PreparedStatement ctrps = con.prepareStatement("select count(*) from CLIENT_COMMAND where trunc(CCMD_DATE) = trunc(sysdate)");
+                ResultSet ctrs = ctrps.executeQuery();
+                while (ctrs.next())
+                    ctr += ctrs.getInt(1);
                 showReport();
                 todayFlag = false;
                 con.close();
@@ -52,7 +60,13 @@ public class SellList implements Initializable {
         } else {
             try {
                 assert con != null;
-                getSellsList = con.prepareStatement("SELECT * FROM client_command");
+                getSellsList = con.prepareStatement("select CLIENT_COMMAND.CCMD_ID as \"command\", CLT_ID as \"client\", MEDICINE.MEDI_ID as \"medicine\", CCMD_DATE as \"date\", CCL_QTE as \"quantity\", MEDI_PU as \"price\", CCL_QTE * MEDI_PU as \"amount\"\n" +
+                        "from CLIENT_COMMAND, CLIENT_COMMAND_LINE, MEDICINE\n" +
+                        "where CLIENT_COMMAND.CCMD_ID = CLIENT_COMMAND_LINE.CCMD_ID and MEDICINE.MEDI_ID = CLIENT_COMMAND_LINE.MEDI_ID");
+                PreparedStatement ctrps = con.prepareStatement("select count(*) from CLIENT_COMMAND");
+                ResultSet ctrs = ctrps.executeQuery();
+                while (ctrs.next())
+                    ctr += ctrs.getInt(1);
                 showReport();
                 con.close();
             } catch (SQLException e) {
@@ -63,35 +77,25 @@ public class SellList implements Initializable {
 
     private void showReport() {
         today.setText(LocalDate.now().toString());
-        ccmd_id.setCellValueFactory(new PropertyValueFactory<>("purID"));
-        clt_id.setCellValueFactory(new PropertyValueFactory<>("cusID"));
-        medi_id.setCellValueFactory(new PropertyValueFactory<>("itemID"));
+        ccmd_id.setCellValueFactory(new PropertyValueFactory<>("command"));
+        clt_id.setCellValueFactory(new PropertyValueFactory<>("client"));
+        medi_id.setCellValueFactory(new PropertyValueFactory<>("medicine"));
         ccmd_date.setCellValueFactory(new PropertyValueFactory<>("date"));
-        ccl_qty.setCellValueFactory(new PropertyValueFactory<>("qte"));
-        ccmd_total.setCellValueFactory(new PropertyValueFactory<>("paid"));
-        empl_name.setCellValueFactory(new PropertyValueFactory<>("user"));
+        ccl_qty.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        medi_pu.setCellValueFactory(new PropertyValueFactory<>("price"));
+        ccmd_total.setCellValueFactory(new PropertyValueFactory<>("amount"));
 
         try {
             ResultSet sellsList = getSellsList.executeQuery();
 
-            ObservableList<Command> list = FXCollections.observableArrayList();
+            ObservableList<ClientCommand> list = FXCollections.observableArrayList();
 
-            int ctr = 0;
             double total = 0.0;
 
             while(sellsList.next()) {
-                list.add(new Command(sellsList.getInt("ccmd_id"),
-                        sellsList.getInt("clt_id"),
-                        sellsList.getInt("medi_id"),
-                        sellsList.getString("ccmd_date"),
-                        sellsList.getInt("ccl_qte"),
-                        sellsList.getDouble("ccmd_total"),
-                        sellsList.getString("empl_name"))
-                );
+                list.add(ClientCommand.getInstance(sellsList));
 
-                ctr++;
-                total += sellsList.getDouble("ccmd_total");
-
+                total += sellsList.getDouble("amount");
             }
 
             lblAmount.setText(total + " $");
@@ -101,5 +105,10 @@ public class SellList implements Initializable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void backToDashboard() {
+        Base b = Base.currentBase;
+        b.ctrlRightPane(b.FXML_URL.get("Dashboard"));
     }
 }
