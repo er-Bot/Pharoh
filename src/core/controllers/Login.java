@@ -144,7 +144,7 @@ public class Login implements Initializable  {
                     //Moving to InitializerController Class to load all required resources
                     Initializer.initStage(logIn);
                 } else {
-                    new PromptDialog("Authentication Error!", "Either username or password did not match!");
+                    PromptDialog.dialog("Authentication Error!", "Either username or password did not match!");
                 }
 
                 con.close();
@@ -165,7 +165,7 @@ public class Login implements Initializable  {
         primaryStage.setScene(scene);
 
         primaryStage.initStyle(StageStyle.UNDECORATED);
-        String css = Login.class.getResource("/core/css/login.css").toExternalForm();
+        String css = Login.class.getResource("/core/css/float.css").toExternalForm();
 
         scene.getStylesheets().add(css); // Adding stylesheet
         primaryStage.setTitle("Log In Prompt");

@@ -29,7 +29,6 @@ public class Base implements Initializable {
     public Button btnInventoryItem;
     public Button btnCustomers;
     public Button btnSells;
-    public Button btnRentals;
     public Button btnAccounts;
     public Button btnAdmin;
     public AnchorPane paneAccountSection;
@@ -190,5 +189,19 @@ public class Base implements Initializable {
     public void quit() {
         Stage stage = (Stage) closebtn.getScene().getWindow();
         stage.close();
+    }
+
+    static void loadTable(String url){
+        try {
+            AnchorPane anch = currentBase.paneRight;
+            anch.getChildren().clear();
+            AnchorPane pane = FXMLLoader.load(Base.class.getResource(url));
+            pane.setPrefHeight(anch.getHeight());
+            pane.setPrefWidth(anch.getWidth());
+
+            anch.getChildren().add(pane);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

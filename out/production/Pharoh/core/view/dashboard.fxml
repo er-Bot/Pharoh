@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
 <?import javafx.scene.Cursor?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<BorderPane prefHeight="700.0" prefWidth="915.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="core.controllers.Dashboard">
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="700.0" prefWidth="915.0" stylesheets="@../css/screen.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="core.controllers.Dashboard">
    <right>
        <AnchorPane style="-fx-border-color: #263238; -fx-border-width: 0 0 0 4;" BorderPane.alignment="CENTER">
-           <Label alignment="CENTER" layoutX="71.0" layoutY="6.0" prefHeight="50.0" prefWidth="168.0" text="Overview" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+           <Label alignment="CENTER" layoutX="71.0" layoutY="6.0" prefHeight="50.0" prefWidth="168.0" styleClass="text_subtitle" text="Overview" textFill="#263238" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <font>
                    <Font size="34.0" />
                </font>
@@ -29,44 +39,44 @@
                <padding>
                    <Insets left="20.0" />
                </padding>
-               <Label prefHeight="29.0" prefWidth="114.0" text="Out of Stock:">
+               <Label prefHeight="29.0" prefWidth="114.0" styleClass="text_info" text="Out of Stock:" textFill="#263238">
                    <font>
                        <Font name="System Bold" size="15.0" />
                    </font>
                </Label>
-               <Label fx:id="lblOutOfStock" alignment="CENTER_RIGHT" prefHeight="52.0" prefWidth="258.0" style="-fx-text-fill: #f16666;" text="Label" textFill="#f16666" GridPane.columnIndex="1">
+               <Label fx:id="lblOutOfStock" alignment="CENTER_RIGHT" prefHeight="52.0" prefWidth="258.0" style="-fx-text-fill: #f16666;" styleClass="text_red" text="Label" textFill="#f16666" GridPane.columnIndex="1">
                    <font>
-                       <Font size="29.0" />
+                       <Font size="18.0" />
                    </font>
                </Label>
-               <Label fx:id="lblTotalBought" alignment="CENTER_RIGHT" prefHeight="59.0" prefWidth="225.0" style="-fx-text-fill: #23d480;" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                   <font>
-                       <Font size="29.0" />
-                   </font>
-               </Label>
-               <Label prefHeight="29.0" prefWidth="112.0" text="Total bought: " GridPane.rowIndex="1">
+               <Label prefHeight="29.0" prefWidth="112.0" styleClass="text_info" text="Total bought: " textFill="#263238" GridPane.rowIndex="1">
                    <font>
                        <Font name="System Bold" size="15.0" />
                    </font>
                </Label>
-               <Label prefHeight="29.0" prefWidth="114.0" text="Total sold :" GridPane.rowIndex="2">
+               <Label fx:id="lblTotalBought" alignment="CENTER_RIGHT" prefHeight="59.0" prefWidth="225.0" style="-fx-text-fill: #23d480;" styleClass="text_green" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                   <font>
+                       <Font size="18.0" />
+                   </font>
+               </Label>
+               <Label prefHeight="29.0" prefWidth="114.0" styleClass="text_info" text="Total sold :" textFill="#263238" GridPane.rowIndex="2">
                    <font>
                        <Font name="System Bold" size="15.0" />
                    </font>
                </Label>
-               <Label fx:id="lblTotalSold" alignment="CENTER_RIGHT" prefHeight="59.0" prefWidth="225.0" style="-fx-text-fill: #23d480;" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <Label fx:id="lblTotalSold" alignment="CENTER_RIGHT" prefHeight="59.0" prefWidth="225.0" style="-fx-text-fill: #23d480;" styleClass="text_green" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2">
                    <font>
-                       <Font size="29.0" />
+                       <Font size="18.0" />
                    </font>
                </Label>
-               <Label prefHeight="29.0" prefWidth="114.0" text="Total net:" GridPane.rowIndex="3">
+               <Label prefHeight="29.0" prefWidth="114.0" styleClass="text_info" text="Total net:" textFill="#263238" GridPane.rowIndex="3">
                    <font>
                        <Font name="System Bold" size="15.0" />
                    </font>
                </Label>
-               <Label fx:id="lblTotalNet" alignment="CENTER_RIGHT" prefHeight="59.0" prefWidth="225.0" style="-fx-text-fill: #23d480;" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3">
+               <Label fx:id="lblTotalNet" alignment="CENTER_RIGHT" prefHeight="59.0" prefWidth="225.0" style="-fx-text-fill: #23d480;" styleClass="text_green" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3">
                    <font>
-                       <Font size="29.0" />
+                       <Font size="18.0" />
                    </font>
                </Label>
            </GridPane>
@@ -82,57 +92,51 @@
                   <padding>
                       <Insets left="10.0" right="10.0" />
                   </padding>
-                  <Pane prefHeight="240.0" prefWidth="225.0">
-                      <Button fx:id="btnTodaySell" contentDisplay="TOP" layoutX="35.0" layoutY="23.0" onAction="#showSell" prefHeight="154.0" prefWidth="160.0" stylesheets="@../css/dashboard.css" text="Sells">
+                  <Pane>
+                      <Button fx:id="btnTodaySell" contentDisplay="TOP" layoutX="35.0" layoutY="23.0" onAction="#showSell" prefHeight="154.0" prefWidth="160.0" styleClass="circle_main" text="Sells">
                           <font>
                               <Font name="System Bold" size="20.0" />
                           </font>
                           <cursor>
                               <Cursor fx:constant="HAND" />
                           </cursor>
-                     <graphic>
-                        <ImageView />
-                     </graphic>
                       </Button>
-                      <Label fx:id="lblTodaySellCtr" alignment="CENTER" layoutX="120.0" layoutY="14.0" prefHeight="50.0" prefWidth="47.0" style="-fx-background-color: #23d480; -fx-text-fill: white; -fx-background-radius: 30 30 30 30;" text="Label">
+                      <Label fx:id="lblTodaySellCtr" alignment="CENTER" layoutX="174.0" layoutY="-2.0" prefHeight="50.0" prefWidth="47.0" styleClass="circle_over" text="Label">
                           <font>
                               <Font name="System Bold" size="15.0" />
                           </font>
                       </Label>
-                      <Label layoutX="30.0" layoutY="196.0" prefHeight="29.0" prefWidth="65.0" text="Sold: ">
+                      <Label layoutX="30.0" layoutY="196.0" prefHeight="29.0" prefWidth="65.0" styleClass="text_info" text="Sold: " textFill="#f1189a">
                           <font>
                               <Font name="System Bold" size="15.0" />
                           </font>
                       </Label>
-                      <Label fx:id="lblTodaysSellAmount" layoutX="98.0" layoutY="196.0" prefHeight="30.0" prefWidth="160.0" text="Amount" textFill="#23d480">
+                      <Label fx:id="lblTodaysSellAmount" layoutX="98.0" layoutY="196.0" prefHeight="30.0" prefWidth="125.0" styleClass="text_green" text="Amount" textFill="#23d480">
                           <font>
                               <Font name="System Bold" size="20.0" />
                           </font>
                       </Label>
                   </Pane>
-                  <Pane prefHeight="240.0" prefWidth="225.0">
-                      <Button fx:id="btnTodayBuy" contentDisplay="TOP" layoutX="35.0" layoutY="23.0" onAction="#showRent" prefHeight="154.0" prefWidth="160.0" stylesheets="@../css/dashboard.css" text="Commands">
+                  <Pane>
+                      <Button fx:id="btnTodayBuy" contentDisplay="TOP" layoutX="35.0" layoutY="23.0" onAction="#showCommand" prefHeight="154.0" prefWidth="160.0" styleClass="circle_main" text="Commands">
                           <font>
                               <Font name="System Bold" size="20.0" />
                           </font>
-                          <graphic>
-                              <ImageView />
-                          </graphic>
                           <cursor>
                               <Cursor fx:constant="HAND" />
                           </cursor>
                       </Button>
-                      <Label fx:id="lblTodaysBuyCtr" alignment="CENTER" layoutX="120.0" layoutY="14.0" prefHeight="50.0" prefWidth="47.0" style="-fx-background-color: #23d480; -fx-text-fill: white; -fx-background-radius: 30 30 30 30;" text="Label">
+                      <Label fx:id="lblTodaysBuyCtr" alignment="CENTER" layoutX="172.0" layoutY="-2.0" prefHeight="50.0" prefWidth="47.0" styleClass="circle_over" text="Label">
                           <font>
                               <Font name="System Bold" size="15.0" />
                           </font>
                       </Label>
-                      <Label layoutX="22.0" layoutY="197.0" prefHeight="29.0" prefWidth="79.0" text="Total">
+                      <Label layoutX="22.0" layoutY="197.0" prefHeight="29.0" prefWidth="79.0" styleClass="text_info" text="Total" textFill="#1693cc">
                           <font>
                               <Font name="System Bold" size="15.0" />
                           </font>
                       </Label>
-                      <Label fx:id="lblTodaysBuyAmount" layoutX="106.0" layoutY="196.0" prefHeight="30.0" prefWidth="160.0" text="Amount" textFill="#23d480">
+                      <Label fx:id="lblTodaysBuyAmount" layoutX="106.0" layoutY="196.0" prefHeight="30.0" prefWidth="125.0" styleClass="text_green" text="Amount" textFill="#23d480">
                           <font>
                               <Font name="System Bold" size="20.0" />
                           </font>
@@ -141,14 +145,14 @@
               </HBox>
          </center>
          <top>
-              <Label alignment="CENTER" prefHeight="50.0" text="Today's" BorderPane.alignment="CENTER">
+              <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="50.0" styleClass="text_subtitle" text="Today's" textFill="#ff001e" BorderPane.alignment="CENTER">
                   <font>
                       <Font size="34.0" />
                   </font>
               </Label>
          </top>
          <bottom>
-              <Button fx:id="loadAgain" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" graphicTextGap="10.0" onAction="#loadAgain" prefHeight="42.0" prefWidth="61.0" style="-fx-border-color: none;" stylesheets="@../css/dashboard.css" BorderPane.alignment="CENTER_RIGHT">
+              <Button fx:id="loadAgain" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" graphicTextGap="10.0" onAction="#loadAgain" prefHeight="60.0" prefWidth="60.0" styleClass="button_round" BorderPane.alignment="CENTER_RIGHT">
                   <cursor>
                       <Cursor fx:constant="HAND" />
                   </cursor>
@@ -163,22 +167,31 @@
                         <Image url="@../img/refresh.png" />
                     </ImageView>
                 </graphic>
+               <padding>
+                  <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+               </padding>
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
               </Button>
          </bottom>
          <BorderPane.margin>
-            <Insets bottom="50.0" top="50.0" />
+            <Insets bottom="50.0" left="40.0" right="10.0" top="50.0" />
          </BorderPane.margin>
       </BorderPane>
    </center>
    <top>
       <BorderPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <center>
-              <Label alignment="CENTER" prefHeight="72.0" prefWidth="400.0" style="-fx-border-width: 0 0 4 0; -fx-border-color: #263238; -fx-border-radius: 15;" text="Dashboard" textFill="#263238" BorderPane.alignment="CENTER">
+              <Label alignment="CENTER" graphicTextGap="20.0" prefHeight="72.0" prefWidth="400.0" styleClass="text_title" text="Dashboard" textFill="RED" BorderPane.alignment="CENTER">
                   <font>
                       <Font name="System Bold" size="45.0" />
                   </font>
                   <graphic>
-                      <ImageView />
+                      <ImageView fitWidth="50.0" preserveRatio="true">
+                     <image>
+                        <Image url="@../img/home.png" />
+                     </image></ImageView>
                   </graphic>
               </Label>
          </center>

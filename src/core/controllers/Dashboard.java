@@ -1,17 +1,15 @@
 package core.controllers;
 
 import core.db.DBConnection;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
 
-import java.io.IOException;
 import java.net.URL;
-import java.sql.*;
-import java.time.LocalDate;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public class Dashboard implements Initializable {
@@ -53,13 +51,13 @@ public class Dashboard implements Initializable {
         lblOutOfStock.setText(stockOut.toString());
     }
 
-    public void loadAgain() {
+    public static void load(){
         Connection connection = DBConnection.getConnection();
         try {
             assert connection != null;
 
-            PreparedStatement getTodaysSell = connection.prepareStatement("SELECT COUNT(*), SUM(ccmd_total) FROM client_command WHERE ccmd_date = '"+ Date.valueOf(LocalDate.now()) + "'");
-            PreparedStatement getTodaysPurchase = connection.prepareStatement("SELECT COUNT(*), SUM(scmd_total) FROM supplier_command WHERE scmd_date = '"+ Date.valueOf(LocalDate.now()) + "'");
+            PreparedStatement getTodaysSell = connection.prepareStatement("SELECT COUNT(*), SUM(ccmd_total) FROM client_command WHERE trunc(ccmd_date) = trunc(sysdate)");
+            PreparedStatement getTodaysPurchase = connection.prepareStatement("SELECT COUNT(*), SUM(scmd_total) FROM supplier_command WHERE trunc(scmd_date) = trunc(sysdate)");
             PreparedStatement getOutOfStock = connection.prepareStatement("SELECT * FROM medicine WHERE medi_stock_qte =" + 0);
 
             PreparedStatement getTotalSell = connection.prepareStatement("SELECT SUM(ccmd_total) FROM client_command");
@@ -109,36 +107,25 @@ public class Dashboard implements Initializable {
             totalSell = totSell;
             totalBought = totBuy;
             stockOut = sOCtr;
-
-            //Setting values on the fields
-            setFields();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void showRent() {
-        loadTable("/core/view/commandlist.fxml");
+    public void loadAgain() {
+        load();
+        setFields();
+    }
+
+    public void showCommand() {
+        Base.loadTable("/core/view/commandlist.fxml");
     }
 
     public void showSell() {
         SellList.todayFlag = true;
-        loadTable("/core/view/selllist.fxml");
+        Base.loadTable("/core/view/selllist.fxml");
     }
 
-    private void loadTable(String url){
-        try {
-            Scene scn = btnTodaySell.getScene();
-            AnchorPane anch = (AnchorPane) scn.lookup("#paneRight");
-            anch.getChildren().clear();
-            AnchorPane pane = FXMLLoader.load(getClass().getResource(url));
-            pane.setPrefHeight(anch.getHeight());
-            pane.setPrefWidth(anch.getWidth());
 
-            anch.getChildren().add(pane);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
 }

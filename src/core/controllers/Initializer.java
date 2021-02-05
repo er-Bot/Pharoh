@@ -1,9 +1,6 @@
 package core.controllers;
 
 import core.db.DBConnection;
-import core.db.Medicine;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,10 +14,6 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -86,75 +79,17 @@ public class Initializer implements Initializable {
         }
 
         @Override
-        protected Object call() throws SQLException, InterruptedException {
+        protected Object call() throws InterruptedException {
             Connection con = DBConnection.getConnection();
             assert con != null;
 
             Thread.sleep(THREAD_SLEEP_INTERVAL);
             this.updateMessage("Loading Medicines...");
-
-            ObservableList<Medicine> medicineList = FXCollections.observableArrayList();
-            ArrayList<String> medicineNames = new ArrayList<>();
-
-            PreparedStatement getMedicineList = con.prepareStatement("select * from medicine order by medi_id");
-            ResultSet medicineRS = getMedicineList.executeQuery();
-
-            while(medicineRS.next()) {
-                Medicine medicine = Medicine.getInstance(medicineRS);
-                medicineList.add(medicine);
-                medicineNames.add(medicine.getMedi_name());
-            }
-            System.out.println(medicineList);
-
-            Inventory.medicineList = medicineList;
-            Inventory.medicineNames = medicineNames;
+            (new Thread(Inventory::load)).start();
 
             Thread.sleep(THREAD_SLEEP_INTERVAL);
             this.updateMessage("Loading Dashboard Contents...");
-
-            PreparedStatement getTodaysSell = con.prepareStatement("select count(*), sum(CCMD_TOTAL) from CLIENT_COMMAND where trunc(CCMD_DATE) = trunc(sysdate)");
-            ResultSet todaysSell = getTodaysSell.executeQuery();
-            PreparedStatement getTotalSell = con.prepareStatement("select sum(CCMD_TOTAL) from CLIENT_COMMAND");
-            ResultSet totalSells = getTotalSell.executeQuery();
-            PreparedStatement getTodaysPurchase = con.prepareStatement("select count(*), sum(SCMD_TOTAL) from SUPPLIER_COMMAND where trunc(SCMD_DATE) = trunc(sysdate)");
-            ResultSet todaysPurchace = getTodaysPurchase.executeQuery();
-            PreparedStatement getTotalPurchase = con.prepareStatement("select sum(SCMD_TOTAL) from SUPPLIER_COMMAND");
-            ResultSet totalPurchaces = getTotalPurchase.executeQuery();
-            PreparedStatement getOutOfStock = con.prepareStatement("select count(*) from MEDICINE where MEDI_STOCK_QTE = 0");
-            ResultSet stockOut = getOutOfStock.executeQuery();
-
-            double todaySell = 0.0;
-            double totalSell = 0;
-            double todayPurchase = 0.0;
-            double totalPurchase = 0;
-            int purchaseCount = 0;
-            int sellCount = 0;
-            int  stockOutCtr = 0;
-
-            while(todaysSell.next()) {
-                sellCount += todaysSell.getInt(1);
-                todaySell += todaysSell.getDouble(2);
-            }
-            while(totalSells.next()) {
-                totalSell += totalSells.getDouble(1);
-            }
-            while (todaysPurchace.next()) {
-                purchaseCount += todaysPurchace.getInt(1);
-                todayPurchase += todaysPurchace.getDouble(2);
-            }
-            while (totalPurchaces.next()) {
-                totalPurchase += totalPurchaces.getDouble(1);
-            }
-            while (stockOut.next())
-                stockOutCtr += stockOut.getInt(1);
-
-            Dashboard.todaySellCtr = sellCount;
-            Dashboard.todaysTotalSell = todaySell;
-            Dashboard.todayTotalBought = todayPurchase;
-            Dashboard.todaysBuyCtr = purchaseCount;
-            Dashboard.stockOut = stockOutCtr;
-            Dashboard.totalBought = totalPurchase;
-            Dashboard.totalSell = totalSell;
+            (new Thread(Dashboard::load)).start();
 
             //Updating Status of the Task
             this.updateMessage("Loading Finished!");

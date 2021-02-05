@@ -13,33 +13,19 @@ import javafx.stage.StageStyle;
 import java.io.IOException;
 
 public class PromptDialog {
+
     private static double x, y;
-    public PromptDialog(String header, String error) {
 
-        Stage stg = new Stage();
-        stg.setAlwaysOnTop(true);
+    public Label lblHeader;
+    public TextArea txtError;
+    public Button btnClose;
+    public Button btnOK;
 
-        //Modality is so that this window must be interacted before others
-        stg.initModality(Modality.APPLICATION_MODAL);
-        stg.initStyle(StageStyle.UNDECORATED);
-        stg.setResizable(false);
-
+    public static void dialog(String header, String error) {
         try {
+            Stage stg = new Stage();
+            Parent root = FXMLLoader.load(PromptDialog.class.getResource("/core/view/prompt.fxml"));
 
-            Parent root = FXMLLoader.load(getClass().getResource("/core/view/prompt.fxml"));
-            root.setOnMousePressed(event -> {
-                x = event.getSceneX();
-                y =event.getSceneY();
-            });
-            root.setOnMouseDragged(event -> {
-                stg.setX(event.getScreenX() - x);
-                stg.setY(event.getScreenY() - y);
-            });
-
-
-            Scene s = new Scene(root);
-
-            //Getting useful nodes from FXML to set error report
             Label lblHeader = (Label) root.lookup("#lblHeader");
             TextArea txtError = (TextArea) root.lookup("#txtError");
             Button btnClose = (Button) root.lookup("#btnClose");
@@ -47,14 +33,55 @@ public class PromptDialog {
             lblHeader.setText(header);
             txtError.setText(error);
 
-            //Setting close button event
-            btnClose.setOnAction(event -> stg.hide());
-
-            stg.setScene(s);
-            stg.show();
+            commun(root, stg, btnClose);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    public static void confirm(String header, String error, ConfirmTask tsk){
+        try {
+            Stage stg = new Stage();
+            Parent root = FXMLLoader.load(PromptDialog.class.getResource("/core/view/prompt_error.fxml"));
+
+            Label lblHeader = (Label) root.lookup("#lblHeader");
+            TextArea txtError = (TextArea) root.lookup("#txtError");
+            Button btnClose = (Button) root.lookup("#btnClose");
+            Button btnConfirm = (Button) root.lookup("#btnOK");
+
+            lblHeader.setText(header);
+            txtError.setText(error);
+            btnConfirm.setOnAction(event -> {
+                tsk.fire();
+                stg.close();
+            });
+
+            commun(root, stg, btnClose);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void commun(Parent root, Stage stg, Button btnClose){
+        stg.setAlwaysOnTop(true);
+
+        stg.initModality(Modality.APPLICATION_MODAL);
+        stg.initStyle(StageStyle.UNDECORATED);
+        stg.setResizable(false);
+
+        Scene s = new Scene(root);
+        root.setOnMousePressed(event -> {
+            x = event.getSceneX();
+            y =event.getSceneY();
+        });
+        root.setOnMouseDragged(event -> {
+            stg.setX(event.getScreenX() - x);
+            stg.setY(event.getScreenY() - y);
+        });
+
+        btnClose.setOnAction(event -> stg.close());
+
+        stg.setScene(s);
+        stg.show();
+    }
 }

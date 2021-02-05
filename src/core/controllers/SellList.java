@@ -94,7 +94,6 @@ public class SellList implements Initializable {
 
             while(sellsList.next()) {
                 list.add(ClientCommand.getInstance(sellsList));
-
                 total += sellsList.getDouble("amount");
             }
 

@@ -34,9 +34,9 @@
     <schema id="11" parent="1" name="ERBO">
       <ObjectId>101</ObjectId>
       <CreatedTimestamp>2021-01-27.13:01:58</CreatedTimestamp>
-      <ModifiedTimestamp>2021-02-02.20:23:44</ModifiedTimestamp>
+      <ModifiedTimestamp>2021-02-05.10:41:47</ModifiedTimestamp>
       <IntrospectionVersion>200820</IntrospectionVersion>
-      <IntrospectionTimestamp>2021-02-02.20:23:45</IntrospectionTimestamp>
+      <IntrospectionTimestamp>2021-02-05.10:41:58</IntrospectionTimestamp>
       <Current>1</Current>
     </schema>
     <schema id="12" parent="1" name="GGSYS">
@@ -350,7 +350,7 @@
     <table id="94" parent="11" name="MEDICINE">
       <ObjectId>73590</ObjectId>
       <CreatedTimestamp>2021-01-28.13:35:10</CreatedTimestamp>
-      <ModifiedTimestamp>2021-02-02.20:23:44</ModifiedTimestamp>
+      <ModifiedTimestamp>2021-02-05.10:41:47</ModifiedTimestamp>
       <TemporaryPreserve>1</TemporaryPreserve>
     </table>
     <table id="95" parent="11" name="MEDICINE_GROUP">
@@ -49811,17 +49811,14 @@
     <column id="7172" parent="94" name="MEDI_DCI">
       <Position>6</Position>
       <DataType>VARCHAR2(32 byte)|0s</DataType>
-      <NotNull>1</NotNull>
     </column>
     <column id="7173" parent="94" name="MEDI_FORM">
       <Position>7</Position>
       <DataType>VARCHAR2(32 byte)|0s</DataType>
-      <NotNull>1</NotNull>
     </column>
     <column id="7174" parent="94" name="MEDI_DOSE">
       <Position>8</Position>
       <DataType>NUMBER(*)|0s</DataType>
-      <NotNull>1</NotNull>
     </column>
     <column id="7175" parent="94" name="MEDI_GRP">
       <Position>9</Position>
@@ -49857,7 +49854,14 @@
       <InitiallyDeferred>1</InitiallyDeferred>
       <UnderlyingIndexName>MED_NAME_UNIQUE</UnderlyingIndexName>
     </key>
-    <trigger id="7180" parent="94" name="MEDI_ID_TRIG">
+    <foreign-key id="7180" parent="94" name="MED_GRP_ID">
+      <ModifiedTimestamp>2021-02-04.16:58:37</ModifiedTimestamp>
+      <ColNames>MEDI_GRP</ColNames>
+      <RefTableName>MEDICINE_GROUP</RefTableName>
+      <RefKeyName>MEDICINE_GROUP_PK</RefKeyName>
+      <OnDelete>restrict</OnDelete>
+    </foreign-key>
+    <trigger id="7181" parent="94" name="MEDI_ID_TRIG">
       <ObjectId>73610</ObjectId>
       <SourceTextLength>164</SourceTextLength>
       <DependsOnIds>144,1754,73620</DependsOnIds>
@@ -49866,17 +49870,17 @@
       <Events>I</Events>
       <Turn>before-row</Turn>
     </trigger>
-    <column id="7181" parent="95" name="MGRP_ID">
+    <column id="7182" parent="95" name="MGRP_ID">
       <Position>1</Position>
       <DataType>NUMBER(*)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="7182" parent="95" name="MGRP_NAME">
+    <column id="7183" parent="95" name="MGRP_NAME">
       <Position>2</Position>
       <DataType>VARCHAR2(32 byte)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <index id="7183" parent="95" name="MEDICINE_GROUP_PK">
+    <index id="7184" parent="95" name="MEDICINE_GROUP_PK">
       <ObjectId>73596</ObjectId>
       <CreatedTimestamp>2021-01-28.13:48:33</CreatedTimestamp>
       <ModifiedTimestamp>2021-01-28.13:48:33</ModifiedTimestamp>
@@ -49884,14 +49888,14 @@
       <ColNames>MGRP_ID</ColNames>
       <Unique>1</Unique>
     </index>
-    <key id="7184" parent="95" name="MEDICINE_GROUP_PK">
+    <key id="7185" parent="95" name="MEDICINE_GROUP_PK">
       <ModifiedTimestamp>2021-01-28.13:48:33</ModifiedTimestamp>
       <ColNames>MGRP_ID</ColNames>
       <InitiallyDeferred>1</InitiallyDeferred>
       <UnderlyingIndexName>MEDICINE_GROUP_PK</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
-    <trigger id="7185" parent="95" name="MGRP_ID_TRIG">
+    <trigger id="7186" parent="95" name="MGRP_ID_TRIG">
       <ObjectId>73622</ObjectId>
       <SourceTextLength>165</SourceTextLength>
       <DependsOnIds>144,1754,73621</DependsOnIds>
@@ -49900,27 +49904,27 @@
       <Events>I</Events>
       <Turn>before-row</Turn>
     </trigger>
-    <column id="7186" parent="96" name="PHAR_ID">
+    <column id="7187" parent="96" name="PHAR_ID">
       <Position>1</Position>
       <DataType>NUMBER(*)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="7187" parent="96" name="PHAR_NAME">
+    <column id="7188" parent="96" name="PHAR_NAME">
       <Position>2</Position>
       <DataType>VARCHAR2(32 byte)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="7188" parent="96" name="PHAR_ADDRESS">
+    <column id="7189" parent="96" name="PHAR_ADDRESS">
       <Position>3</Position>
       <DataType>VARCHAR2(128 byte)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="7189" parent="96" name="PHAR_RS">
+    <column id="7190" parent="96" name="PHAR_RS">
       <Position>4</Position>
       <DataType>VARCHAR2(32 byte)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <index id="7190" parent="96" name="PHARMACIE_PK">
+    <index id="7191" parent="96" name="PHARMACIE_PK">
       <ObjectId>73567</ObjectId>
       <CreatedTimestamp>2021-01-27.13:01:58</CreatedTimestamp>
       <ModifiedTimestamp>2021-01-27.13:01:58</ModifiedTimestamp>
@@ -49928,14 +49932,14 @@
       <ColNames>PHAR_ID</ColNames>
       <Unique>1</Unique>
     </index>
-    <key id="7191" parent="96" name="PHARMACIE_PK">
+    <key id="7192" parent="96" name="PHARMACIE_PK">
       <ModifiedTimestamp>2021-01-27.13:01:58</ModifiedTimestamp>
       <ColNames>PHAR_ID</ColNames>
       <InitiallyDeferred>1</InitiallyDeferred>
       <UnderlyingIndexName>PHARMACIE_PK</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
-    <trigger id="7192" parent="96" name="PHAR_ID_TRIG">
+    <trigger id="7193" parent="96" name="PHAR_ID_TRIG">
       <ObjectId>73609</ObjectId>
       <SourceTextLength>169</SourceTextLength>
       <DependsOnIds>144,1754,73568</DependsOnIds>
@@ -49944,7 +49948,7 @@
       <Events>I</Events>
       <Turn>before-row</Turn>
     </trigger>
-    <trigger id="7193" parent="96" name="PHAR_ID_TRIGGER">
+    <trigger id="7194" parent="96" name="PHAR_ID_TRIGGER">
       <ObjectId>73569</ObjectId>
       <SourceTextLength>170</SourceTextLength>
       <DependsOnIds>144,1754,73568</DependsOnIds>
@@ -49953,42 +49957,42 @@
       <Events>I</Events>
       <Turn>before-row</Turn>
     </trigger>
-    <column id="7194" parent="97" name="SUPL_ID">
+    <column id="7195" parent="97" name="SUPL_ID">
       <Position>1</Position>
       <DataType>NUMBER(*)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="7195" parent="97" name="SUPL_NAME">
+    <column id="7196" parent="97" name="SUPL_NAME">
       <Position>2</Position>
       <DataType>VARCHAR2(32 byte)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="7196" parent="97" name="SUPL_ADDRESS">
+    <column id="7197" parent="97" name="SUPL_ADDRESS">
       <Position>3</Position>
       <DataType>VARCHAR2(128 byte)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="7197" parent="97" name="SUPL_TEL">
+    <column id="7198" parent="97" name="SUPL_TEL">
       <Position>4</Position>
       <DataType>VARCHAR2(16 byte)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="7198" parent="97" name="SUPL_EMAIL">
+    <column id="7199" parent="97" name="SUPL_EMAIL">
       <Position>5</Position>
       <DataType>VARCHAR2(32 byte)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="7199" parent="97" name="SUPL_RS">
+    <column id="7200" parent="97" name="SUPL_RS">
       <Position>6</Position>
       <DataType>VARCHAR2(32 byte)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="7200" parent="97" name="SUPL_CIVIL_ID">
+    <column id="7201" parent="97" name="SUPL_CIVIL_ID">
       <Position>7</Position>
       <DataType>VARCHAR2(32 byte)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <index id="7201" parent="97" name="SUPLIER_PK">
+    <index id="7202" parent="97" name="SUPLIER_PK">
       <ObjectId>73587</ObjectId>
       <CreatedTimestamp>2021-01-28.13:10:02</CreatedTimestamp>
       <ModifiedTimestamp>2021-01-28.13:10:02</ModifiedTimestamp>
@@ -49996,14 +50000,14 @@
       <ColNames>SUPL_ID</ColNames>
       <Unique>1</Unique>
     </index>
-    <key id="7202" parent="97" name="SUPLIER_PK">
+    <key id="7203" parent="97" name="SUPLIER_PK">
       <ModifiedTimestamp>2021-01-28.13:10:02</ModifiedTimestamp>
       <ColNames>SUPL_ID</ColNames>
       <InitiallyDeferred>1</InitiallyDeferred>
       <UnderlyingIndexName>SUPLIER_PK</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
-    <trigger id="7203" parent="97" name="SUPP_ID_TRIG">
+    <trigger id="7204" parent="97" name="SUPP_ID_TRIG">
       <ObjectId>73623</ObjectId>
       <SourceTextLength>169</SourceTextLength>
       <DependsOnIds>144,1754,73616</DependsOnIds>
@@ -50012,31 +50016,31 @@
       <Events>I</Events>
       <Turn>before-row</Turn>
     </trigger>
-    <column id="7204" parent="98" name="SCMD_ID">
+    <column id="7205" parent="98" name="SCMD_ID">
       <Position>1</Position>
       <DataType>NUMBER(*)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="7205" parent="98" name="SCMD_DATE">
+    <column id="7206" parent="98" name="SCMD_DATE">
       <Position>2</Position>
       <DataType>DATE|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="7206" parent="98" name="SCMD_TOTAL">
+    <column id="7207" parent="98" name="SCMD_TOTAL">
       <Position>3</Position>
       <DataType>NUMBER(*)|0s</DataType>
     </column>
-    <column id="7207" parent="98" name="PHAR_ID">
+    <column id="7208" parent="98" name="PHAR_ID">
       <Position>4</Position>
       <DataType>NUMBER(*)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="7208" parent="98" name="SUPL_ID">
+    <column id="7209" parent="98" name="SUPL_ID">
       <Position>5</Position>
       <DataType>NUMBER(*)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <index id="7209" parent="98" name="SUPLIER_COMMAND_PK">
+    <index id="7210" parent="98" name="SUPLIER_COMMAND_PK">
       <ObjectId>73585</ObjectId>
       <CreatedTimestamp>2021-01-28.13:07:50</CreatedTimestamp>
       <ModifiedTimestamp>2021-01-28.13:07:50</ModifiedTimestamp>
@@ -50044,28 +50048,28 @@
       <ColNames>SCMD_ID</ColNames>
       <Unique>1</Unique>
     </index>
-    <key id="7210" parent="98" name="SUPLIER_COMMAND_PK">
+    <key id="7211" parent="98" name="SUPLIER_COMMAND_PK">
       <ModifiedTimestamp>2021-01-28.13:07:50</ModifiedTimestamp>
       <ColNames>SCMD_ID</ColNames>
       <InitiallyDeferred>1</InitiallyDeferred>
       <UnderlyingIndexName>SUPLIER_COMMAND_PK</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="7211" parent="98" name="PHAR_SCMD_KEY">
+    <foreign-key id="7212" parent="98" name="PHAR_SCMD_KEY">
       <ModifiedTimestamp>2021-01-28.13:09:19</ModifiedTimestamp>
       <ColNames>PHAR_ID</ColNames>
       <RefTableName>PHARMACY</RefTableName>
       <RefKeyName>PHARMACIE_PK</RefKeyName>
       <OnDelete>restrict</OnDelete>
     </foreign-key>
-    <foreign-key id="7212" parent="98" name="SUPL_CSMD_KEY">
+    <foreign-key id="7213" parent="98" name="SUPL_CSMD_KEY">
       <ModifiedTimestamp>2021-01-28.13:10:35</ModifiedTimestamp>
       <ColNames>SUPL_ID</ColNames>
       <RefTableName>SUPPLIER</RefTableName>
       <RefKeyName>SUPLIER_PK</RefKeyName>
       <OnDelete>restrict</OnDelete>
     </foreign-key>
-    <trigger id="7213" parent="98" name="SCMD_ID_TRIG">
+    <trigger id="7214" parent="98" name="SCMD_ID_TRIG">
       <ObjectId>73625</ObjectId>
       <SourceTextLength>165</SourceTextLength>
       <DependsOnIds>144,1754,73624</DependsOnIds>
@@ -50074,32 +50078,32 @@
       <Events>I</Events>
       <Turn>before-row</Turn>
     </trigger>
-    <column id="7214" parent="99" name="SCL_ID">
+    <column id="7215" parent="99" name="SCL_ID">
       <Position>1</Position>
       <DataType>NUMBER(*)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="7215" parent="99" name="SCL_QTE">
+    <column id="7216" parent="99" name="SCL_QTE">
       <Position>2</Position>
       <DataType>NUMBER(*)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="7216" parent="99" name="SCL_PU">
+    <column id="7217" parent="99" name="SCL_PU">
       <Position>3</Position>
       <DataType>NUMBER(*)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="7217" parent="99" name="SCMD_ID">
+    <column id="7218" parent="99" name="SCMD_ID">
       <Position>4</Position>
       <DataType>NUMBER(*)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="7218" parent="99" name="MEDI_ID">
+    <column id="7219" parent="99" name="MEDI_ID">
       <Position>5</Position>
       <DataType>NUMBER(*)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <index id="7219" parent="99" name="SUPPLIER_COMMAND_LINE_PK">
+    <index id="7220" parent="99" name="SUPPLIER_COMMAND_LINE_PK">
       <ObjectId>73589</ObjectId>
       <CreatedTimestamp>2021-01-28.13:33:52</CreatedTimestamp>
       <ModifiedTimestamp>2021-01-28.13:33:52</ModifiedTimestamp>
@@ -50107,28 +50111,28 @@
       <ColNames>SCL_ID</ColNames>
       <Unique>1</Unique>
     </index>
-    <key id="7220" parent="99" name="SUPPLIER_COMMAND_LINE_PK">
+    <key id="7221" parent="99" name="SUPPLIER_COMMAND_LINE_PK">
       <ModifiedTimestamp>2021-01-28.13:33:52</ModifiedTimestamp>
       <ColNames>SCL_ID</ColNames>
       <InitiallyDeferred>1</InitiallyDeferred>
       <UnderlyingIndexName>SUPPLIER_COMMAND_LINE_PK</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="7221" parent="99" name="SCMD_SCL_KEY">
+    <foreign-key id="7222" parent="99" name="SCMD_SCL_KEY">
       <ModifiedTimestamp>2021-01-28.13:34:50</ModifiedTimestamp>
       <ColNames>SCMD_ID</ColNames>
       <RefTableName>SUPPLIER_COMMAND</RefTableName>
       <RefKeyName>SUPLIER_COMMAND_PK</RefKeyName>
       <OnDelete>restrict</OnDelete>
     </foreign-key>
-    <foreign-key id="7222" parent="99" name="MEDI_SCL_KEY">
+    <foreign-key id="7223" parent="99" name="MEDI_SCL_KEY">
       <ModifiedTimestamp>2021-01-28.13:35:44</ModifiedTimestamp>
       <ColNames>MEDI_ID</ColNames>
       <RefTableName>MEDICINE</RefTableName>
       <RefKeyName>MEDICINE_PK</RefKeyName>
       <OnDelete>restrict</OnDelete>
     </foreign-key>
-    <trigger id="7223" parent="99" name="SCL_ID_TRIG">
+    <trigger id="7224" parent="99" name="SCL_ID_TRIG">
       <ObjectId>73627</ObjectId>
       <SourceTextLength>162</SourceTextLength>
       <DependsOnIds>144,1754,73626</DependsOnIds>
@@ -50137,36 +50141,36 @@
       <Events>I</Events>
       <Turn>before-row</Turn>
     </trigger>
-    <column id="7224" parent="100" name="USR_ID">
+    <column id="7225" parent="100" name="USR_ID">
       <Position>1</Position>
       <DataType>NUMBER(*)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="7225" parent="100" name="USR_NAME">
+    <column id="7226" parent="100" name="USR_NAME">
       <Position>2</Position>
       <DataType>VARCHAR2(32 byte)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="7226" parent="100" name="USR_PASS">
+    <column id="7227" parent="100" name="USR_PASS">
       <Position>3</Position>
       <DataType>VARCHAR2(64 byte)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="7227" parent="100" name="USR_TYPE">
+    <column id="7228" parent="100" name="USR_TYPE">
       <Position>4</Position>
       <DataType>VARCHAR2(20 byte)|0s</DataType>
       <NotNull>1</NotNull>
       <DefaultExpression>&apos;EMPLOYEE&apos;</DefaultExpression>
     </column>
-    <column id="7228" parent="100" name="EMPL_ID">
+    <column id="7229" parent="100" name="EMPL_ID">
       <Position>5</Position>
       <DataType>NUMBER(*)|0s</DataType>
     </column>
-    <column id="7229" parent="100" name="DOCT_ID">
+    <column id="7230" parent="100" name="DOCT_ID">
       <Position>6</Position>
       <DataType>NUMBER(*)|0s</DataType>
     </column>
-    <index id="7230" parent="100" name="USERS_PK">
+    <index id="7231" parent="100" name="USERS_PK">
       <ObjectId>73571</ObjectId>
       <CreatedTimestamp>2021-01-27.22:49:36</CreatedTimestamp>
       <ModifiedTimestamp>2021-01-27.22:49:36</ModifiedTimestamp>
@@ -50174,34 +50178,34 @@
       <ColNames>USR_ID</ColNames>
       <Unique>1</Unique>
     </index>
-    <key id="7231" parent="100" name="USERS_PK">
+    <key id="7232" parent="100" name="USERS_PK">
       <ModifiedTimestamp>2021-01-27.22:49:37</ModifiedTimestamp>
       <ColNames>USR_ID</ColNames>
       <InitiallyDeferred>1</InitiallyDeferred>
       <UnderlyingIndexName>USERS_PK</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="7232" parent="100" name="USR_EMPL_FK">
+    <foreign-key id="7233" parent="100" name="USR_EMPL_FK">
       <ModifiedTimestamp>2021-02-02.13:02:29</ModifiedTimestamp>
       <ColNames>EMPL_ID</ColNames>
       <RefTableName>EMPLOYEE</RefTableName>
       <RefKeyName>EMPLOYEE_PK</RefKeyName>
       <OnDelete>restrict</OnDelete>
     </foreign-key>
-    <foreign-key id="7233" parent="100" name="USR_DOCT_FK">
+    <foreign-key id="7234" parent="100" name="USR_DOCT_FK">
       <ModifiedTimestamp>2021-02-02.13:03:37</ModifiedTimestamp>
       <ColNames>DOCT_ID</ColNames>
       <RefTableName>DOCTOR</RefTableName>
       <RefKeyName>DOCTOR_PK</RefKeyName>
       <OnDelete>restrict</OnDelete>
     </foreign-key>
-    <check id="7234" parent="100" name="USR_TYPE_CHK">
+    <check id="7235" parent="100" name="USR_TYPE_CHK">
       <ModifiedTimestamp>2021-01-28.06:42:19</ModifiedTimestamp>
       <ColNames>USR_TYPE</ColNames>
       <InitiallyDeferred>1</InitiallyDeferred>
       <Predicate>USR_TYPE IN (&apos;EMPLOYEE&apos;, &apos;ADMIN&apos;)</Predicate>
     </check>
-    <trigger id="7235" parent="100" name="USR_ID_SEQ">
+    <trigger id="7236" parent="100" name="USR_ID_SEQ">
       <ObjectId>73628</ObjectId>
       <SourceTextLength>164</SourceTextLength>
       <DependsOnIds>144,1754,73611</DependsOnIds>

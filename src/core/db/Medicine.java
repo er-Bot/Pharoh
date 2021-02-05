@@ -1,8 +1,6 @@
 package core.db;
 
 import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class Medicine {
 
@@ -15,6 +13,7 @@ public class Medicine {
     String medi_form;
     double medi_dose;
     int medi_grp;
+    String mgrp_name;
 
     public Medicine(int medi_id, String medi_name, Date medi_expire_date, double medi_pu, int medi_stock_qte, String medi_dci, String medi_form, double medi_dose, int medi_grp) {
         this.medi_id = medi_id;
@@ -28,8 +27,28 @@ public class Medicine {
         this.medi_grp = medi_grp;
     }
 
+    public Medicine(int medi_id, String medi_name, Date medi_expire_date, double medi_pu, int medi_stock_qte, String medi_dci, String medi_form, double medi_dose, String mgrp_name) {
+        this.medi_id = medi_id;
+        this.medi_name = medi_name;
+        this.medi_expire_date = medi_expire_date;
+        this.medi_pu = medi_pu;
+        this.medi_stock_qte = medi_stock_qte;
+        this.medi_dci = medi_dci;
+        this.medi_form = medi_form;
+        this.medi_dose = medi_dose;
+        this.mgrp_name = mgrp_name;
+    }
+
     public void setMedi_name(String medi_name) {
         this.medi_name = medi_name;
+    }
+
+    public String getMgrp_name() {
+        return mgrp_name;
+    }
+
+    public void setMgrp_name(String mgrp_name) {
+        this.mgrp_name = mgrp_name;
     }
 
     public void setMedi_expire_date(Date medi_expire_date) {
@@ -98,19 +117,5 @@ public class Medicine {
 
     public double getMedi_dose() {
         return medi_dose;
-    }
-
-    public static Medicine getInstance(ResultSet medicineRS) throws SQLException {
-        return new Medicine(
-                medicineRS.getInt("medi_id"),
-                medicineRS.getString("medi_name"),
-                medicineRS.getDate("medi_expire_date"),
-                medicineRS.getDouble("medi_pu"),
-                medicineRS.getInt("medi_stock_qte"),
-                medicineRS.getString("medi_dci"),
-                medicineRS.getString("medi_form"),
-                medicineRS.getDouble("medi_dose"),
-                medicineRS.getInt("medi_grp")
-        );
     }
 }

@@ -8,13 +8,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import org.controlsfx.control.textfield.TextFields;
 
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
@@ -24,9 +21,6 @@ public class Inventory implements Initializable {
     public TextField txtSearch;
     public Button btnSearch;
     public Label lblSearchResults;
-
-    private static int recordIndex = 0;
-    private static int recordSize = 0;
     public ComboBox<String> txtType;
     public TextField txtStock;
     public TextField txtPrice;
@@ -42,63 +36,71 @@ public class Inventory implements Initializable {
     public Button btnSave;
     public Label lblPageIndex;
     public Button btnListAll;
-    public Button btnOutOfStock;
     public Button btnDelete;
-    public AnchorPane medicinePane;
+    public AnchorPane itemPane;
+    public Button btnEdit;
+
     private Medicine onView = null;
     private static boolean addFlag = false;
+    private static boolean editFlag = false;
     private static boolean searchDone = false;
+    private static int recordIndex = 0;
+    private static int recordSize = 0;
 
-    public static TreeMap<String, Integer> medicineType = new TreeMap<>();
-    public static ObservableList<Medicine> medicineList = FXCollections.observableArrayList(); //This field will auto set from InitializerController Class
+    public static TreeMap<String, Integer> MedGrpStrInt = new TreeMap<>();
+    public static TreeMap<Integer, String> MedGrpIntStr = new TreeMap<>();
+    public static ObservableList<Medicine> medicineList = FXCollections.observableArrayList();
     public static ObservableList<Medicine> tempList = FXCollections.observableArrayList(); //Will hold the main list while searching
+    // for autocomplete
     public static ArrayList<String> medicineNames = new ArrayList<>();
-    public static ObservableList<String> medicineTypeNames = FXCollections.observableArrayList();
+    public static ObservableList<String> medicineGroupNames = FXCollections.observableArrayList();
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        if(Login.loggerAccessLevel.equals("Admin")) {
-            btnDelete.setDisable(false);
-        }
-        txtType.setItems(medicineTypeNames);
-        TextFields.bindAutoCompletion(txtSearch, medicineNames);
-        setView();
-    }
-
-    private void reloadRecords(){
-        medicineList.clear();
+    public static void load(){
         Connection connection = DBConnection.getConnection();
         try {
             assert connection != null;
-            PreparedStatement getmedicineList = connection.prepareStatement("SELECT * FROM MEDICINE ORDER BY MEDI_ID");
-            ResultSet medicineResultSet = getmedicineList.executeQuery();
+            PreparedStatement medListPS = connection.prepareStatement("select * from MEDICINE order by MEDI_GRP, MEDI_NAME");
+            PreparedStatement medGrpListPS = connection.prepareStatement("select * from MEDICINE_GROUP order by MGRP_ID");
+            ResultSet medList = medListPS.executeQuery();
+            ResultSet medGrpList = medGrpListPS.executeQuery();
 
-            while(medicineResultSet.next()) {
-                Medicine medicine = new Medicine(
-                        medicineResultSet.getInt("medi_id"),
-                        medicineResultSet.getString("medi_name"),
-                        medicineResultSet.getDate("medi_expire_date"),
-                        medicineResultSet.getDouble("medi_pu"),
-                        medicineResultSet.getInt("medi_stock_qte"),
-                        medicineResultSet.getString("medi_dci"),
-                        medicineResultSet.getString("medi_form"),
-                        medicineResultSet.getDouble("medi_dose"),
-                        medicineResultSet.getInt("medi_grp")
-                );
-
-                medicineNames.add(medicineResultSet.getString("medi_name"));
-
-                medicineList.add(medicine);
+            while (medGrpList.next()){
+                MedGrpStrInt.put(medGrpList.getString("mgrp_name"), medGrpList.getInt("mgrp_id"));
+                MedGrpIntStr.put(medGrpList.getInt("mgrp_id"), medGrpList.getString("mgrp_name"));
+                medicineGroupNames.add(medGrpList.getString("mgrp_name"));
             }
 
-            setView();
+            while (medList.next()) {
+                medicineList.add(new Medicine(
+                        medList.getInt("medi_id"),
+                        medList.getString("medi_name"),
+                        medList.getDate("medi_expire_date"),
+                        medList.getDouble("medi_pu"),
+                        medList.getInt("medi_stock_qte"),
+                        medList.getString("medi_dci"),
+                        medList.getString("medi_form"),
+                        medList.getDouble("medi_dose"),
+                        medList.getInt("medi_grp")
+                ));
+
+                medicineNames.add(medList.getString("medi_name"));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        if(Login.loggerAccessLevel.equals("ADMIN")) {
+            btnDelete.setDisable(false);
+        }
+        txtType.setItems(medicineGroupNames);
+        setView();
+    }
+
     private void setView() {
-        recordIndex = 0; //Resetting index value
+        recordIndex = 0;
         recordSize = medicineList.size();
 
         //Setting Fields
@@ -128,195 +130,82 @@ public class Inventory implements Initializable {
             recordNavigator();
             lblPageIndex.setText("Showing " + (recordIndex + 1) + " of " + recordSize + " results.");
 
-            if (recordSize > 1) {
+            if (recordSize > 1)
                 btnNextEntry.setDisable(false);
-            }
+            if(recordIndex + 1 == recordSize)
+                btnNextEntry.setDisable(true);
         }
 
         btnPrevEntry.setDisable(true);
+        btnSave.setDisable(true);
     }
 
     private void recordNavigator() {
-        /*txtStock.setStyle("-fx-text-fill: #263238"); //Resetting stock color
+        txtStock.setStyle("-fx-text-fill: #263238"); //Resetting stock color
+        txtPrice.setText("0 $");
 
-        txtPrice.setText("0.0");
-
-        medicineID.setText(Integer.toString(onView.getMedi_id()));
+        medicineID.setText(onView.getMedi_id()+"");
         txtmedicineName.setText(onView.getMedi_name());
-        txtType.setValue(onView.get().toString());
-        if(onView.isRent()) {
-            chkRent.setSelected(true);
-            txtRentRate.setText(Double.toString(onView.getRentRate()));
+        txtType.setValue(MedGrpIntStr.get(onView.getMedi_grp()));
+        date.setValue(onView.getMedi_expire_date().toLocalDate());
+        date.setDisable(!Login.loggerAccessLevel.equals("ADMIN"));
+        txtPrice.setText(onView.getMedi_pu()+" $");
+        txtStock.setText(((int) onView.getMedi_stock_qte())+"");
+        txtDCI.setText(onView.getMedi_dci());
+        txtForm.setText(onView.getMedi_form());
+        txtDose.setText(onView.getMedi_dose()+"");
+
+        if(onView.getMedi_stock_qte() <= 5) //Setting stock color red if it's very limited
+            txtStock.setStyle("-fx-text-fill: #f16666");
+    }
+
+    private void activateFields(boolean b){
+        activateFields(b, false);
+    }
+    private void activateFields(boolean b, boolean e){
+        //Enabling other buttons
+        btnPrevEntry.setDisable(b);
+        btnNextEntry.setDisable(b);
+        btnListAll.setDisable(b);
+        btnSearch.setDisable(b);
+        btnDelete.setDisable(b);
+        if (!e)
+            btnEdit.setDisable(b);
+        else btnAddNew.setDisable(b);
+        btnSave.setDisable(!b);
+
+        txtmedicineName.setEditable(b);
+        date.setDisable(!b);
+        txtType.setDisable(!b);
+        txtPrice.setEditable(b);
+        txtStock.setEditable(b);
+        txtDCI.setEditable(b);
+        txtDose.setEditable(b);
+        txtForm.setEditable(b);
+
+        if(!e){
+            txtmedicineName.setText("");
+            date.setValue(LocalDate.now());
+            txtPrice.setText("");
+            txtStock.setText("");
+            txtDCI.setText("");
+            txtDose.setText("");
+            txtForm.setText("");
         }
-        if(onView.isSale()) {
-            chkSale.setSelected(true);
-            txtPrice.setText(Double.toString(onView.getSalePrice()));
-        }
-        txtStock.setText(Integer.toString(onView.getStock()));
-
-        if(onView.getStock() <= 5) //Setting stock color red if it's very limited
-            txtStock.setStyle("-fx-text-fill: red");
-
-        //Setting Image
-        if (onView.getPhoto() == null) {
-            ImagePattern img = new ImagePattern(new Image("/main/resources/icons/trolley.png"));
-            imgCustomerPhoto.setFill(img);
-        } else {
-            try {
-                imgPath = onView.getPhoto();
-
-                File tmpPath = new File(imgPath.replace("file:", ""));
-
-                if(tmpPath.exists()) {
-                    ImagePattern img = new ImagePattern(new Image(imgPath));
-                    imgCustomerPhoto.setFill(img);
-                } else {
-                    imgPath = null;
-                    ImagePattern img = new ImagePattern(new Image("/main/resources/icons/trolley.png"));
-                    imgCustomerPhoto.setFill(img);
-                }
-
-            } catch (Exception e) {
-                //Fallback photo in case image not found
-                ImagePattern img = new ImagePattern(new Image("/main/resources/icons/trolley.png"));
-                imgCustomerPhoto.setFill(img);
-            }
-        }*/
     }
 
-    public void listAllmedicines(ActionEvent event) {
-        /*btnGoBack.setOnAction(e -> {
-            medicineListPane.setVisible(false);  //Setting medicine list pane visible
-            medicinePane.setVisible(true); //Setting medicine pane visible
-        });
-        tbl.setmedicines(medicineList);
-        listView();*/
-    }
-
-    public void btnDelAction(ActionEvent event) {
-        /*Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirm Delete");
-        alert.setGraphic(new ImageView(this.getClass().getResource("/main/resources/icons/x-button.png").toString()));
-
-        alert.setHeaderText("Do you really want to delete this entry?");
-        alert.setContentText("Press OK to confirm, Cancel to go back");
-
-        Optional<ButtonType> result = alert.showAndWait();
-
-        if(result.get() == ButtonType.OK) {
-            Connection connection = DBConnection.getConnection();
-            try {
-                PreparedStatement ps = connection.prepareStatement("DELETE FROM  medicine WHERE medicineID = "+Integer.valueOf(medicineID.getText()));
-                ps.executeUpdate();
-
-                new PromptDialogController("Operation Successful.", "medicine is deleted from the database. Restart or refresh to see effective result.");
-                reloadRecords();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }*/
-    }
-
-    public void outOfStockList(ActionEvent event) {
-/*
-        btnGoBack.setOnAction(e -> {
-            medicineListPane.setVisible(false);  //Setting medicine list pane visible
-            medicinePane.setVisible(true); //Setting medicine pane visible
-        });
-
-        Connection con = DBConnection.getConnection();
-        try {
-            PreparedStatement ps = con.prepareStatement("SELECT * FROM medicine, medicinetype WHERE medicineTypeId = medicineType_medicineTypeId AND stock ="+0);
-            ResultSet medicineResultSet = ps.executeQuery();
-
-            ObservableList<medicine> outOfStk = FXCollections.observableArrayList();
-
-            while(medicineResultSet.next()) {
-                medicine medicine = new medicine(medicineResultSet.getInt("medicineID"),
-                        medicineResultSet.getString("medicineName"),
-                        medicineResultSet.getInt("stock"),
-                        false,
-                        false,
-                        medicineResultSet.getDouble("salePrice"),
-                        medicineResultSet.getDouble("rentRate"),
-                        medicineResultSet.getString("photo"),
-                        medicineResultSet.getString("typeName"));
-
-                medicineNames.add(medicineResultSet.getString("medicineName"));
-
-                if(medicineResultSet.getString("rentalOrSale").contains("Rental"))
-                {
-                    medicine.setRent(true);
-                }
-                if(medicineResultSet.getString("rentalOrSale").contains("Sale")) {
-                }
-
-                btnGoBack.setOnAction(e -> {
-                    medicineListPane.setVisible(false);  //Setting medicine list pane visible
-                    medicinePane.setVisible(true); //Setting medicine pane visible
-                });
-
-                outOfStk.add(medicine);
-
-            }
-
-            tbl.setmedicines(outOfStk);
-
-            listView();
-            con.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }*/
-    }
-
-    private void listView() {
-       /* medicinePane.setVisible(false); //Setting default medicine pane not visible
-        medicineListPane.setVisible(true); //Setting medicine list visible
-
-        columnmedicineID.setCellValueFactory(new PropertyValueFactory<>("id"));
-        columnmedicineName.setCellValueFactory(new PropertyValueFactory<>("name"));
-        columnStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
-        columnmedicineType.setCellValueFactory(new PropertyValueFactory<>("medicineType"));
-        columnForRent.setCellValueFactory(new PropertyValueFactory<>("rent"));
-        columnForSale.setCellValueFactory(new PropertyValueFactory<>("sale"));
-        columnRentalRate.setCellValueFactory(new PropertyValueFactory<>("rentRate"));
-        columnPrice.setCellValueFactory(new PropertyValueFactory<>("salePrice"));*/
-
-    }
-
-    public void btnAddMode(ActionEvent event) {
-     /*   if(addFlag) {
+    public void btnAddMode() {
+        if(addFlag) {
             addFlag = false; //Resetting addFlag value.
-            btnAddIcon.setGlyphName("PLUS");
-
-            //Enabling other buttons
-            btnPrevEntry.setDisable(false);
-            btnNextEntry.setDisable(false);
-            btnListAll.setDisable(false);
-            btnSearch.setDisable(false);
-            btnOutOfStock.setDisable(false);
-            btnDelete.setDisable(false);
-
-            String defColor = "#263238";
-
-            //Changing Focus Color
-            txtmedicineName.setUnFocusColor(Color.web(defColor));
-            txtPrice.setUnFocusColor(Color.web(defColor));
-            txtRentRate.setUnFocusColor(Color.web(defColor));
-            txtType.setUnFocusColor(Color.web(defColor));
-            txtSearch.setUnFocusColor(Color.web(defColor));
-            txtStock.setUnFocusColor(Color.web(defColor));
-
-            //Setting Label
+            activateFields(false);
             lblMode.setText("Navigation Mode");
-
             reloadRecords();
-
-
-        } else {
+        }
+        else {
             Connection con = DBConnection.getConnection();
             try {
-                PreparedStatement ps = con.prepareStatement("SELECT max(medicineID) FROM medicine");
+                assert con != null;
+                PreparedStatement ps = con.prepareStatement("SELECT max(MEDI_ID) FROM MEDICINE");
                 ResultSet rs = ps.executeQuery();
 
                 while(rs.next()) {
@@ -324,154 +213,190 @@ public class Inventory implements Initializable {
                 }
 
                 addFlag = true; //Setting flag true to enable exit mode
-                btnAddIcon.setGlyphName("UNDO"); //Changing glyph
-
-                //Setting Label
                 lblMode.setText("Entry Mode");
-
-                ImagePattern img = new ImagePattern(new Image("/main/resources/icons/trolley.png"));
-                imgCustomerPhoto.setFill(img);
-
-                //Disabling other buttons
-                btnPrevEntry.setDisable(true);
-                btnNextEntry.setDisable(true);
-                btnOutOfStock.setDisable(true);
-                btnListAll.setDisable(true);
-                btnSearch.setDisable(true);
-                btnDelete.setDisable(true);
-
-                //Cleaning fields
-                txtmedicineName.setText("");
-                txtType.setValue("");
-                txtRentRate.setText("");
-                txtPrice.setText("");
-                imgPath = null;
-                txtStock.setText("");
+                activateFields(true);
             } catch (SQLException e) {
-                new PromptDialogController("SQL Error!", "Error occured while executing Query.\nSQL Error Code: " + e.getErrorCode());
+                PromptDialog.dialog("SQL Error", "Error occurred while executing Query.\nSQL Error Code: " + e.getErrorCode());
             }
-        }*/
+        }
     }
 
-    private ObservableList<Medicine> searchWithID(Integer id) {
-        return null;
-     /*   Connection con = DBConnection.getConnection();
-
-        String idSQL = "SELECT * FROM medicine, medicinetype WHERE medicineID = ? AND medicineTypeId = medicineType_medicineTypeId";
-
-        ObservableList<medicine> searchResult = FXCollections.observableArrayList(); //list to hold search result
-
-        try {
-            PreparedStatement preparedStatement = con.prepareStatement(idSQL);
-            preparedStatement.setInt(1, id);
-
-            ResultSet medicineResultSet = preparedStatement.executeQuery();
-
-            //Getting values from medicines result set
-            while (medicineResultSet.next()) {
-                medicine medicine = new medicine(medicineResultSet.getInt("medicineID"),
-                        medicineResultSet.getString("medicineName"),
-                        medicineResultSet.getInt("stock"),
-                        false,
-                        false,
-                        medicineResultSet.getDouble("salePrice"),
-                        medicineResultSet.getDouble("rentRate"),
-                        medicineResultSet.getString("photo"),
-                        medicineResultSet.getString("typeName"));
-
-                if (medicineResultSet.getString("rentalOrSale").contains("Rental")) {
-                    medicine.setRent(true);
-                }
-                if (medicineResultSet.getString("rentalOrSale").contains("Sale")) {
-                    medicine.setSale(true);
-                }
-
-                searchResult.add(medicine);
-            }
-
-            con.close();
-
-        } catch (SQLException e) {
-            new PromptDialogController("SQL Error!",
-                    "Error occured while executing Query.\nSQL Error Code: " + e.getErrorCode());
-        }
-
-        return searchResult;*/
+    private void reloadRecords(){
+        if(!medicineList.isEmpty())
+            medicineList.clear();
+        if(!medicineGroupNames.isEmpty())
+            medicineGroupNames.clear();
+        if(!medicineNames.isEmpty())
+            medicineNames.clear();
+        if(!MedGrpIntStr.isEmpty())
+            MedGrpIntStr.clear();
+        if(!MedGrpStrInt.isEmpty())
+            MedGrpStrInt.clear();
+        load();
+        if (!medicineList.isEmpty())
+        onView = medicineList.get(0);
+        setView();
     }
 
-    private ObservableList<Medicine> searchWithName(String name) {
-        return null;
-     /*   Connection con = DBConnection.getConnection();
-
-        String nameSQL = "SELECT * FROM medicine, medicinetype WHERE medicineName COLLATE UTF8_GENERAL_CI like ? AND medicineTypeId = medicineType_medicineTypeId";
-
-        ObservableList<medicine> searchResult = FXCollections.observableArrayList(); //list to hold search result
-
-        try {
-            PreparedStatement preparedStatement2 = con.prepareStatement(nameSQL);
-            preparedStatement2.setString(1, "%" + txtSearch.getText() + "%");
-
-            ResultSet medicineResultSet = preparedStatement2.executeQuery();
-
-            //Getting values from customers result set
-            while (medicineResultSet.next()) {
-                medicine medicine = new medicine(medicineResultSet.getInt("medicineID"),
-                        medicineResultSet.getString("medicineName"),
-                        medicineResultSet.getInt("stock"),
-                        false,
-                        false,
-                        medicineResultSet.getDouble("salePrice"),
-                        medicineResultSet.getDouble("rentRate"),
-                        medicineResultSet.getString("photo"),
-                        medicineResultSet.getString("typeName"));
-
-                if(medicineResultSet.getString("rentalOrSale").contains("Rental")) {
-                    medicine.setRent(true);
-                }
-                if(medicineResultSet.getString("rentalOrSale").contains("Sale")) {
-                    medicine.setSale(true);
-                }
-                searchResult.add(medicine);
+    public void btnSaveAction(ActionEvent event) {
+        boolean fieldsNotEmpty = !checkFields();
+        if(fieldsNotEmpty)
+            PromptDialog.dialog("Empty Fields", "One or more fields are empty!");
+        else {
+            if (addFlag) {
+                ConfirmTask tsk = () -> {
+                    addRecordToDatabase();
+                    activateFields(false);
+                    btnAddMode();
+                };
+                PromptDialog.confirm("Confirm Entry", "Press Confirm to add this entry, Cancel to go back", tsk);
             }
-
-            con.close();
-
-        } catch (SQLException e) {
-            new PromptDialogController("SQL Error!",
-                    "Error occured while executing Query.\nSQL Error Code: " + e.getErrorCode());
+            if (editFlag) {
+                ConfirmTask tsk = () -> {
+                    updateRecord();
+                    activateFields(false, true);
+                    btnEditMode();
+                };
+                PromptDialog.confirm("Confirm Edit", "Press Confirm to update this entry, Cancel to go back", tsk);
+            }
         }
+    }
 
-        return searchResult;*/
+    private boolean checkFields() {
+        boolean entryFlag = true;
+        if (txtmedicineName.getText().equals("")) {
+            txtmedicineName.setStyle("-fx-background-color: #f16666");
+            entryFlag = false;
+        } else txtmedicineName.setStyle("-fx-background-color: white");
+
+        if(txtPrice.getText().equals("")) {
+            txtPrice.setStyle("-fx-background-color: #f16666");;
+            entryFlag = false;;
+        } else txtPrice.setStyle("-fx-background-color: white");
+
+        if(txtStock.getText().equals("")) {
+            txtStock.setStyle("-fx-background-color: #f16666");;
+            entryFlag = false;;
+        } else txtPrice.setStyle("-fx-background-color: white");
+
+        return entryFlag;
+    }
+
+    private void populatePS(PreparedStatement ps) throws SQLException {
+        ps.setString(1, txtmedicineName.getText());
+        ps.setInt(2, MedGrpStrInt.get(txtType.getValue()));
+        ps.setDate(3, Date.valueOf(date.getValue()));
+        String pu = txtPrice.getText();
+        if(pu.endsWith("$"))
+            pu = pu.split("[\\s$]+")[0];
+        ps.setDouble(4, Double.parseDouble(pu));
+        ps.setInt(5, Integer.parseInt(txtStock.getText()));
+        if(txtDCI.getText() == null || txtDCI.getText().equals(""))
+            ps.setNull(6, Types.NULL);
+        else ps.setString(6, txtDCI.getText());
+        if(txtForm.getText() == null || txtForm.getText().equals(""))
+            ps.setNull(7, Types.NULL);
+        else ps.setString(7, txtForm.getText());
+        if(txtDose.getText() == null || txtDose.getText().equals(""))
+            ps.setNull(8, Types.NULL);
+        else ps.setDouble(8, Double.parseDouble(txtDose.getText()));
+    }
+
+    private void addRecordToDatabase() {
+        Connection con = DBConnection.getConnection();
+        try {
+            assert con != null;
+            PreparedStatement ps = con.prepareStatement("insert into MEDICINE (MEDI_NAME, MEDI_GRP, MEDI_EXPIRE_DATE, MEDI_PU, MEDI_STOCK_QTE, MEDI_DCI, MEDI_FORM, MEDI_DOSE) values (?, ?, ?, ?, ?, ?, ?, ?)");
+            populatePS(ps);
+            ps.executeUpdate();
+            PromptDialog.dialog("Success", "New medicine Added!");
+            reloadRecords();
+        } catch (SQLException e) {
+            PromptDialog.dialog("SQL Error", "Error occurred while executing Query.\nSQL Error Code: " + e.getErrorCode());
+        }
+    }
+
+    public void btnDelAction() {
+        ConfirmTask tsk = () -> {
+            Connection connection = DBConnection.getConnection();
+            try {
+                assert connection != null;
+                PreparedStatement ps = connection.prepareStatement("DELETE FROM  MEDICINE WHERE MEDI_ID = "+Integer.valueOf(medicineID.getText()));
+                PreparedStatement psscl = connection.prepareStatement("DELETE FROM  SUPPLIER_COMMAND_LINE WHERE MEDI_ID = "+Integer.valueOf(medicineID.getText()));
+                PreparedStatement psccl = connection.prepareStatement("DELETE FROM  CLIENT_COMMAND_LINE WHERE MEDI_ID = "+Integer.valueOf(medicineID.getText()));
+
+                psccl.executeUpdate();
+                psscl.executeUpdate();
+                ps.executeUpdate();
+
+                reloadRecords();
+
+                PromptDialog.dialog("Success", "entry is deleted from the database.");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        };
+
+        PromptDialog.confirm("Confirm Delete", "Press Confirm to confirm, Cancel to go back\nIn case of confirmation all elements that depends on this entry will get removed too!!", tsk);
+    }
+
+    public void btnEditMode() {
+        if(editFlag) {
+            editFlag = false; //Resetting addFlag value.
+            activateFields(false, true);
+            lblMode.setText("Navigation Mode");
+            reloadRecords();
+        }
+        else {
+            editFlag = true; //Setting flag true to enable exit mode
+            lblMode.setText("Edit Mode");
+            activateFields(true, true);
+        }
+    }
+
+    private void updateRecord () {
+        Connection con = DBConnection.getConnection();
+        try {
+            assert con != null;
+            PreparedStatement ps = con.prepareStatement("UPDATE MEDICINE SET MEDI_NAME = ?, MEDI_GRP = ?," +
+                    "MEDI_EXPIRE_DATE = ?, MEDI_PU = ?, MEDI_STOCK_QTE = ?, MEDI_DCI = ?, MEDI_FORM = ?, MEDI_DOSE = ? WHERE MEDI_ID = "+Integer.valueOf(medicineID.getText()));
+            populatePS(ps);
+            ps.executeUpdate();
+            PromptDialog.dialog("Success", "Entry updated!");
+            reloadRecords();
+        } catch (SQLException e) {
+            PromptDialog.dialog("SQL Error", "Error occurred while executing Query.\nSQL Error Code: " + e.getErrorCode());
+        }
     }
 
     public void btnSearchAction(ActionEvent event) {
-      /*  if (searchDone) {
+        if (searchDone) {
             searchDone = false;
+            btnSearch.setTooltip(new Tooltip("Search by id or name"));
             lblSearchResults.setVisible(false);
             medicineList = tempList; //Reassigning customers List
             recordSize = medicineList.size();
-            btnSearch.setTooltip(new Tooltip("Search with customers name or id"));
-            btnSearchIcon.setGlyphName("SEARCH");
             setView();
-        } else {
-            ObservableList<medicine> searchResult = FXCollections.observableArrayList(); //list to hold search result
+        }
+        else {
+            ObservableList<Medicine> searchResult = FXCollections.observableArrayList(); //list to hold search result
             try {
-                // Checking if input field is a number then searching with ID
-                // If parsing of Integer fails then we shall try to search
-                // with name instead
                 Integer id = Integer.valueOf(txtSearch.getText());
                 searchResult = searchWithID(id);
-            } catch (NumberFormatException e) {
+            }
+            catch (NumberFormatException e) {
                 String name = txtSearch.getText();
                 searchResult = searchWithName(name);
-            } finally {
+            }
+            finally {
+                assert searchResult != null;
                 if (searchResult.size() <= 0) {
                     lblSearchResults.setText("No Results Found!");
                     lblSearchResults.setVisible(true);
-                } else {
+                }
+                else {
                     tempList = FXCollections.observableArrayList(medicineList);
                     searchDone = true;
-                    btnSearchIcon.setGlyphName("CLOSE");
                     btnSearch.setTooltip(new Tooltip("Reset Full List"));
                     medicineList = searchResult; //Assigning search result to customerList
                     recordSize = searchResult.size();
@@ -480,170 +405,64 @@ public class Inventory implements Initializable {
                     setView();
                 }
             }
-
-        }*/
+        }
     }
 
-    private boolean checkFields() {
-        return false;
-       /* boolean entryFlag = true;
-        if (txtmedicineName.getText().equals("")) {
-            txtmedicineName.setUnFocusColor(Color.web("red"));
-            entryFlag = false;
-        }
+    private ObservableList<Medicine> searchWithID(Integer id) {
+        Connection con = DBConnection.getConnection();
+        ObservableList<Medicine> searchResult = FXCollections.observableArrayList(); //list to hold search result
 
-        if(chkSale.isSelected() && txtPrice.getText().equals("")) {
-            txtPrice.setUnFocusColor(Color.web("red"));
-            entryFlag = false;
-        }
-
-        if(!chkRent.isSelected() && !chkSale.isSelected()) {
-            entryFlag = false;
-        }
-
-        if(chkRent.isSelected() && txtRentRate.getText().equals("")) {
-            txtRentRate.setUnFocusColor(Color.web("red"));
-            entryFlag = false;
-        }
-
-        if(txtType.getValue().equals("")) {
-            txtType.setUnFocusColor(Color.web("red"));
-            entryFlag = false;;
-        }
-
-        if(txtStock.getText().equals("")) {
-            txtStock.setUnFocusColor(Color.web("red"));
-            entryFlag = false;;
-        }
-
-        return entryFlag;*/
-    }
-
-    private void addRecordToDatabase() {
-      /*  Connection con = DBConnection.getConnection();
         try {
-            PreparedStatement ps = con.prepareStatement("INSERT INTO medicine VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
-
-            ps.setInt(1, Integer.valueOf(medicineID.getText()));
-            ps.setString(2, txtmedicineName.getText());
-            ps.setInt(3, Integer.valueOf(txtStock.getText()));
-
-            if(chkRent.isSelected() && chkSale.isSelected())
-                ps.setString(4, "Rental,Sale");
-            else if(chkSale.isSelected())
-                ps.setString(4, "Sale");
-            else if(chkRent.isSelected())
-                ps.setString(4, "Rental");
-
-            Double salePrice = 0.0;
-
-            if(!txtPrice.getText().equals("")) {
-                salePrice = Double.valueOf(txtPrice.getText());
-            }
-
-            Double rentPrice = 0.0;
-
-            if(!txtRentRate.getText().equals("")) {
-                rentPrice = Double.valueOf(txtRentRate.getText());
-            }
-
-            ps.setDouble(5, salePrice);
-            ps.setDouble(6, rentPrice);
-            ps.setString(7, imgPath);
-            ps.setInt(8, medicineType.get(txtType.getValue()));
-
-            ps.executeUpdate();
-
-            new PromptDialogController("Operation Successful!", "New medicine Added!");
-
-
+            assert con != null;
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM MEDICINE WHERE MEDI_ID = ?");
+            ps.setInt(1, id);
+            searchResult = afterSearch(ps);
         } catch (SQLException e) {
-            new PromptDialogController("SQL Error!", "Error occured while executing Query.\nSQL Error Code: " + e.getErrorCode());
-        }*/
+            PromptDialog.dialog("SQL Error", "Error occurred while executing Query.\nSQL Error Code: " + e.getErrorCode());
+        }
+
+        return searchResult;
     }
 
-    private void updateRecord () {
-      /*  Connection con = DBConnection.getConnection();
+    private ObservableList<Medicine> searchWithName(String name) {
+        Connection con = DBConnection.getConnection();
+        ObservableList<Medicine> searchResult = FXCollections.observableArrayList(); //list to hold search result
         try {
-            PreparedStatement ps = con.prepareStatement("UPDATE medicine SET medicineID = ?, medicineName = ?," +
-                    "stock = ?, rentalOrSale = ?, salePrice = ?, rentRate = ?, photo = ?, medicineType_medicineTypeId = ? WHERE medicineID = "+Integer.valueOf(medicineID.getText()));
-            ps.setInt(1, Integer.valueOf(medicineID.getText()));
-            ps.setString(2, txtmedicineName.getText());
-            ps.setInt(3, Integer.valueOf(txtStock.getText()));
-
-            if(chkRent.isSelected() && chkSale.isSelected())
-                ps.setString(4, "Rental,Sale");
-            else if(chkSale.isSelected())
-                ps.setString(4, "Sale");
-            else if(chkRent.isSelected())
-                ps.setString(4, "Rental");
-
-            Double salePrice = 0.0;
-
-            if(!txtPrice.getText().equals("")) {
-                salePrice = Double.valueOf(txtPrice.getText());
-            }
-
-            Double rentPrice = 0.0;
-
-            if(!txtRentRate.getText().equals("")) {
-                rentPrice = Double.valueOf(txtRentRate.getText());
-            }
-
-            ps.setDouble(5, salePrice);
-            ps.setDouble(6, rentPrice);
-            ps.setString(7, imgPath);
-            ps.setInt(8, medicineType.get(txtType.getValue()));
-
-            ps.executeUpdate();
-
-            new PromptDialogController("Operation Successful!", "Entry updated!");
-
-            reloadRecords();
-
+            assert con != null;
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM MEDICINE WHERE MEDI_NAME like '%"+name+"%'");
+            searchResult = afterSearch(ps);
         } catch (SQLException e) {
-            e.printStackTrace();
-            new PromptDialogController("SQL Error!", "Error occured while executing Query.\nSQL Error Code: " + e.getErrorCode());
-        }*/
+            PromptDialog.dialog("SQL Error", "Error occurred while executing Query.\nSQL Error Code: " + e.getErrorCode());
+        }
+
+        return searchResult;
     }
 
-    public void btnSaveAction(ActionEvent event) {
-    /*    if (addFlag) {
-            boolean fieldsNotEmpty = checkFields();
-            if(fieldsNotEmpty) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Confirm Entry");
-                alert.setGraphic(new ImageView(this.getClass().getResource("/main/resources/icons/question (2).png").toString()));
+    private ObservableList<Medicine> afterSearch(PreparedStatement ps) throws SQLException {
+        ObservableList<Medicine> searchResult = FXCollections.observableArrayList(); //list to hold search result
+        ResultSet medRS = ps.executeQuery();
 
-                alert.setHeaderText("Do you really want to add this entry?");
-                alert.setContentText("Press OK to confirm, Cancel to go back");
+        while (medRS.next()) {
+            searchResult.add(
+                    new Medicine(
+                            medRS.getInt("medi_id"),
+                            medRS.getString("medi_name"),
+                            medRS.getDate("medi_expire_date"),
+                            medRS.getDouble("medi_pu"),
+                            medRS.getInt("medi_stock_qte"),
+                            medRS.getString("medi_dci"),
+                            medRS.getString("medi_form"),
+                            medRS.getDouble("medi_dose"),
+                            medRS.getInt("medi_grp")
+                    )
+            );
+        }
 
-                Optional<ButtonType> result = alert.showAndWait();
-
-                if (result.get() == ButtonType.OK) {
-                    addRecordToDatabase();
-                }
-            } else {
-                JFXSnackbar snackbar = new JFXSnackbar(medicinePane);
-                snackbar.show("One or more fields are empty!", 3000);
-            }
-        } else {
-            boolean fieldsNotEmpty = checkFields();
-            if(fieldsNotEmpty) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Confirm Edit");
-                alert.setGraphic(new ImageView(this.getClass().getResource("/main/resources/icons/question (2).png").toString()));
-
-                alert.setHeaderText("Do you really want to update this entry?");
-                alert.setContentText("Press OK to confirm, Cancel to go back");
-
-                Optional<ButtonType> result = alert.showAndWait();
-
-                if (result.get() == ButtonType.OK) {
-                    updateRecord();
-                }
-            }
-
-        }*/
+        return searchResult;
     }
+
+    public void listAllItems(ActionEvent actionEvent) {
+        Base.loadTable("/core/view/medicinelist.fxml");
+    }
+
 }
