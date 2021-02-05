@@ -43,12 +43,12 @@
                                 <Tooltip text="Search by id or name" />
                             </tooltip>
                             <graphic>
-                                <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                                     <Image url="@../img/search.png" />
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <TextField fx:id="txtSearch" alignment="CENTER" layoutY="10.0" prefHeight="32.0" prefWidth="325.0" promptText="search with item id/name" AnchorPane.bottomAnchor="28.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="75.0" AnchorPane.topAnchor="10.0">
+                        <TextField fx:id="txtSearch" alignment="CENTER" layoutY="10.0" prefHeight="32.0" prefWidth="325.0" promptText="search with item id/name" styleClass="text_field" AnchorPane.bottomAnchor="28.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="75.0" AnchorPane.topAnchor="10.0">
                             <font>
                                 <Font size="15.0" />
                             </font>
@@ -102,7 +102,7 @@
                                 <Font name="System Bold" size="14.0" />
                             </font>
                         </Label>
-                        <TextField fx:id="txtPrice" alignment="CENTER" editable="false" prefHeight="31.0" prefWidth="232.0" promptText="0 $" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <TextField fx:id="txtPrice" alignment="CENTER" editable="false" prefHeight="31.0" prefWidth="232.0" promptText="0 $" styleClass="text_field" GridPane.columnIndex="1" GridPane.rowIndex="2">
                             <font>
                                 <Font name="System Bold" size="14.0" />
                             </font>
@@ -112,7 +112,7 @@
                                 <Font name="System Bold" size="14.0" />
                             </font>
                         </Label>
-                        <TextField fx:id="txtStock" alignment="CENTER" editable="false" prefHeight="25.0" prefWidth="273.0" promptText="0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <TextField fx:id="txtStock" alignment="CENTER" editable="false" prefHeight="25.0" prefWidth="273.0" promptText="0" styleClass="text_field" GridPane.columnIndex="1" GridPane.rowIndex="3">
                             <font>
                                 <Font name="System Bold" size="14.0" />
                             </font>
@@ -122,7 +122,7 @@
                                 <Font name="System Bold" size="14.0" />
                             </font>
                         </Label>
-                        <TextField fx:id="txtDCI" alignment="CENTER" editable="false" prefHeight="25.0" prefWidth="273.0" promptText="0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <TextField fx:id="txtDCI" alignment="CENTER" editable="false" prefHeight="25.0" prefWidth="273.0" promptText="0" styleClass="text_field" GridPane.columnIndex="1" GridPane.rowIndex="4">
                             <font>
                                 <Font name="System Bold" size="14.0" />
                             </font>
@@ -132,7 +132,7 @@
                                 <Font name="System Bold" size="14.0" />
                             </font>
                         </Label>
-                        <TextField fx:id="txtDose" alignment="CENTER" editable="false" prefHeight="25.0" prefWidth="273.0" promptText="0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                        <TextField fx:id="txtDose" alignment="CENTER" editable="false" prefHeight="25.0" prefWidth="273.0" promptText="0" styleClass="text_field" GridPane.columnIndex="1" GridPane.rowIndex="5">
                             <font>
                                 <Font name="System Bold" size="14.0" />
                             </font>
@@ -142,7 +142,7 @@
                                 <Font name="System Bold" size="14.0" />
                             </font>
                         </Label>
-                        <TextField fx:id="txtForm" alignment="CENTER" editable="false" prefHeight="25.0" prefWidth="273.0" promptText="0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                        <TextField fx:id="txtForm" alignment="CENTER" editable="false" prefHeight="25.0" prefWidth="273.0" promptText="0" styleClass="text_field" GridPane.columnIndex="1" GridPane.rowIndex="6">
                             <font>
                                 <Font name="System Bold" size="14.0" />
                             </font>
@@ -167,7 +167,7 @@
                      <Tooltip text="Go to previous entry" />
                   </tooltip>
                   <graphic>
-                      <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="button">
+                      <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="button">
                           <Image url="@../img/left.png" />
                       </ImageView>
                   </graphic>
@@ -182,7 +182,7 @@
                      <Tooltip text="Add new entry" />
                   </tooltip>
                   <graphic>
-                      <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="button">
+                      <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="button">
                           <Image url="@../img/add.png" />
                       </ImageView>
                   </graphic>
@@ -197,12 +197,12 @@
                      <Tooltip text="Alter Navigation / Edit mode" />
                   </tooltip>
                   <graphic>
-                      <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="button">
+                      <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="button">
                           <Image url="@../img/edit.png" />
                       </ImageView>
                   </graphic>
                  </Button>
-                  <Button fx:id="btnListAll" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" onAction="#listAllItems" prefHeight="50.0" prefWidth="50.0" styleClass="button_square">
+                  <Button fx:id="btnListAll" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" onAction="#listAllItems" prefHeight="50.0" prefWidth="50.0" styleClass="button_round">
                       <cursor>
                           <Cursor fx:constant="HAND" />
                       </cursor>
@@ -217,12 +217,12 @@
                   <graphic>
                      <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                         <image>
-                           <Image url="@../img/list.png" />
+                           <Image url="@../img/table.png" />
                         </image>
                      </ImageView>
                   </graphic>
                   </Button>
-                  <Button fx:id="btnDelete" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" disable="true" graphicTextGap="0.0" onAction="#btnDelAction" prefHeight="50.0" prefWidth="50.0" styleClass="button_square" textFill="WHITE">
+                  <Button fx:id="btnDelete" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" disable="true" graphicTextGap="0.0" onAction="#btnDelAction" prefHeight="50.0" prefWidth="50.0" styleClass="button_round" textFill="WHITE">
                       <cursor>
                           <Cursor fx:constant="HAND" />
                       </cursor>
@@ -237,7 +237,7 @@
                   <graphic>
                      <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                         <image>
-                           <Image url="@../img/hide.png" />
+                           <Image url="@../img/remove.png" />
                         </image>
                      </ImageView>
                   </graphic>
@@ -252,7 +252,7 @@
                      <Tooltip text="Save modifications" />
                   </tooltip>
                   <graphic>
-                      <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="button">
+                      <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="button">
                           <Image url="@../img/save.png" />
                       </ImageView>
                   </graphic>
@@ -270,7 +270,7 @@
                      <Tooltip text="Go to next entry" />
                   </tooltip>
                   <graphic>
-                      <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="button">
+                      <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" styleClass="button">
                           <Image url="@../img/right.png" />
                       </ImageView>
                   </graphic>

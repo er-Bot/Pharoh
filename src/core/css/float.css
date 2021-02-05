@@ -1,23 +1,24 @@
 .root {
     -fx-background-color: #ffffff;
 }
-
 .header {
     -fx-background-color: #263238;
 }
-
 .text_title {
     -fx-font-smoothing-type: lcd;
     -fx-font-size: 45px;
     -fx-text-fill: white;
 }
-
+.text_subtitle {
+    -fx-text-fill: #263238;
+    -fx-font-size: 34px;
+    -fx-font-smoothing-type: lcd;
+}
 .text_pawn {
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-font-smoothing-type: lcd;
 }
-
 .button_secondary {
     -fx-background-color: white;
     -fx-text-fill: #263238;
@@ -26,7 +27,6 @@
     -fx-font-weight: bold;
     -fx-background-radius: 5;
 }
-
 .button_primary {
     -fx-background-color: #263238;
     -fx-text-fill: white;
@@ -35,13 +35,11 @@
     -fx-font-weight: bold;
     -fx-background-radius: 5;
 }
-
 .button:pressed:hover {
     -fx-scale-y: 0.95;
     -fx-scale-x: 0.95;
     -fx-border-color: #37474F;
 }
-
 .check-box > * {
     -fx-background-color: white;
     -fx-border-color: #263238;
@@ -51,26 +49,25 @@
     -fx-font-weight: bold;
     -fx-font-smoothing-type: lcd;
 }
-
 .check-box:selected > * {
     -fx-background-color: #263238;
     -fx-fill-width: 10px;
 }
-
 .text_area {
     -fx-background-color: transparent;
     -fx-background-radius: 10;
     -fx-effect: none;
 }
-
 .text_area .content {
-    -fx-background-color: transparent;
+    -fx-background-color: white;
     -fx-background-radius: 10;
     -fx-border-color: #263238;
     -fx-border-radius: 10;
     -fx-border-width: 2;
 }
-
 .text_area .text {
     -fx-text-alignment: center;
+}
+.jfx-progress-bar > .bar {
+    -fx-background-color: #263238;
 }

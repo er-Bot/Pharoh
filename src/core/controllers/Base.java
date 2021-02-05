@@ -38,14 +38,10 @@ public class Base implements Initializable {
     public Button btnDueUpdate;
     public AnchorPane paneRight;
 
-    private static String username = "";
-    private static String accessLevel = "";
     public Button closebtn;
     public Label lblDate;
+    public Button hideBtn;
     private BorderPane newRightPane = null;
-    private Button temp = null;
-    private Button recover = null;
-    private static boolean anchorFlag = false;
 
     public static Base currentBase;
 
@@ -102,8 +98,8 @@ public class Base implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         loadFXMLMap();
-        username = Login.loggerUsername;
-        accessLevel = Login.loggerAccessLevel;
+        String username = Login.loggerUsername;
+        String accessLevel = Login.loggerAccessLevel;
         lblUsername.setText(username.toUpperCase());
         lblAccessLevel.setText(accessLevel);
 
@@ -187,8 +183,11 @@ public class Base implements Initializable {
     }
 
     public void quit() {
-        Stage stage = (Stage) closebtn.getScene().getWindow();
-        stage.close();
+        ConfirmTask tsk = () -> {
+            Stage stage = (Stage) closebtn.getScene().getWindow();
+            stage.close();
+        };
+        PromptDialog.confirm("Confirm Quit", "Are you sure you want to log out and quit?", tsk);
     }
 
     static void loadTable(String url){
@@ -203,5 +202,10 @@ public class Base implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void hide() {
+        Stage stage = (Stage) hideBtn.getScene().getWindow();
+        stage.setIconified(true);
     }
 }

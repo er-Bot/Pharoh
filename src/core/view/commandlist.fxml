@@ -85,7 +85,6 @@
         </effect>
     </TableView>
    <stylesheets>
-      <URL value="@../css/selllist.css" />
       <URL value="@../css/screen.css" />
    </stylesheets>
 </AnchorPane>

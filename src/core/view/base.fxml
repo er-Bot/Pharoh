@@ -10,11 +10,11 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1200.0" style="-fx-background-color: #263238;" stylesheets="@../css/base.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="core.controllers.Base">
    <BorderPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <center>
-           <AnchorPane fx:id="paneRight" prefHeight="698.0" prefWidth="1169.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER" />
+           <AnchorPane fx:id="paneRight" prefHeight="700.0" prefWidth="875.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER" />
       </center>
       <left>
       
-          <AnchorPane id="leftPane" fx:id="paneLeft" maxWidth="286.0" minHeight="0.0" minWidth="75.0" prefHeight="700.0" prefWidth="286.0" stylesheets="@../css/base.css" BorderPane.alignment="CENTER">
+          <AnchorPane id="leftPane" fx:id="paneLeft" maxWidth="290.0" minHeight="0.0" minWidth="75.0" prefHeight="700.0" prefWidth="300.0" stylesheets="@../css/base.css" BorderPane.alignment="CENTER">
             <BorderPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <bottom>
                     <AnchorPane fx:id="paneAccountSection" prefHeight="109.0" prefWidth="270.0" BorderPane.alignment="CENTER">
@@ -41,7 +41,7 @@
                            <Font name="System Bold" size="14.0" />
                         </font>
                      </Label>
-                     <Button fx:id="closebtn" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" ellipsisString="" graphicTextGap="0.0" layoutX="105.0" layoutY="62.0" mnemonicParsing="false" onAction="#quit" prefHeight="40.0" prefWidth="150.0" style="-fx-border-width: 0 2 0 2; -fx-border-radius: 10; -fx-background-radius: 10;" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="30.0">
+                     <Button fx:id="closebtn" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" ellipsisString="" graphicTextGap="0.0" layoutX="189.0" layoutY="65.0" mnemonicParsing="false" onAction="#quit" prefHeight="44.0" prefWidth="57.0" style="-fx-border-width: 0; -fx-border-radius: 10; -fx-background-radius: 10;" AnchorPane.leftAnchor="189.0" AnchorPane.rightAnchor="44.0">
                         <font>
                            <Font name="Courier New" size="16.0" />
                         </font>
@@ -50,12 +50,28 @@
                          </cursor>
                         <graphic>
                             <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                <Image url="@../img/x-button.png" />
+                                <Image url="@../img/close-w.png" />
                             </ImageView>
                         </graphic>
                          <tooltip>
                              <Tooltip text="Log out &amp; Quit " />
                          </tooltip>
+                     </Button>
+                     <Button fx:id="hideBtn" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" ellipsisString="" graphicTextGap="0.0" layoutX="118.0" layoutY="63.0" mnemonicParsing="false" onAction="#hide" prefHeight="44.0" prefWidth="46.0" style="-fx-border-width: 0; -fx-border-radius: 10; -fx-background-radius: 10;">
+                        <font>
+                           <Font name="Courier New" size="16.0" />
+                        </font>
+                        <cursor>
+                           <Cursor fx:constant="HAND" />
+                        </cursor>
+                        <graphic>
+                            <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                <Image url="@../img/hide-w.png"/>
+                            </ImageView>
+                        </graphic>
+                        <tooltip>
+                           <Tooltip text="Minimize window" />
+                        </tooltip>
                      </Button>
                      <BorderPane.margin>
                         <Insets bottom="20.0" />

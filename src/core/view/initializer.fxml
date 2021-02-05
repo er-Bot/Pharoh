@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 <?import java.lang.String?>
-<AnchorPane prefHeight="300.0" prefWidth="600.0" style="-fx-background-color: white;" stylesheets="@../css/initializer.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="core.controllers.Initializer">
+<AnchorPane prefHeight="300.0" prefWidth="600.0" style="-fx-background-color: white;" stylesheets="@../css/float.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="core.controllers.Initializer">
 
     <ProgressBar fx:id="progressIndicator" layoutX="90.0" layoutY="198.0" prefHeight="9.0" prefWidth="420.0">
       <styleClass>
@@ -13,12 +13,12 @@
          <String fx:value="jfx-progress-bar" />
          <String fx:value="label" />
       </styleClass></ProgressBar>
-    <Label fx:id="taskName" alignment="CENTER" layoutX="133.0" layoutY="248.0" prefHeight="18.0" prefWidth="334.0" style="-fx-text-fill: #263238;" text="Label">
+    <Label fx:id="taskName" alignment="CENTER" layoutX="133.0" layoutY="248.0" prefHeight="18.0" prefWidth="334.0" styleClass="text_pawn" text="Label">
         <font>
             <Font size="14.0" />
         </font>
     </Label>
-    <Label layoutX="88.0" layoutY="53.0" prefHeight="48.0" prefWidth="253.0" style="-fx-text-fill: #263238;" text="Loading resources...">
+    <Label layoutX="88.0" layoutY="53.0" prefHeight="50.0" prefWidth="382.0" styleClass="text_subtitle" text="Loading resources...">
         <font>
             <Font size="18.0" />
         </font>
